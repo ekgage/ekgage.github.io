@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Phase 1 Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0e;--bg2:#181817;--bg3:#222220;--bg4:#2a2a28;
+  --border:#ffffff14;--border2:#ffffff22;
+  --text:#f0eeea;--text2:#9f9f9b;--text3:#6b6b67;
+  --accent:#c8f060;--accent-bg:#c8f06012;
+  --red:#f87171;--red-bg:#f8717114;
+  --amber:#fbbf24;--amber-bg:#fbbf2414;
+  --blue:#60a5fa;--blue-bg:#60a5fa14;
+  --r:10px;--r2:14px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto}
+.topbar{padding:16px 16px 0;flex-shrink:0}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.app-title{font-family:'DM Mono',monospace;font-size:13px;color:var(--text3);letter-spacing:0.08em}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.week-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.week-strip::-webkit-scrollbar{display:none}
+.day-pill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);cursor:pointer;transition:all .15s;min-width:44px}
+.day-pill.active{background:var(--accent);border-color:var(--accent)}
+.day-pill.active .dp-name,.day-pill.active .dp-num{color:#0f0f0e}
+.day-pill.logged .dp-num{color:var(--accent)}
+.dp-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.dp-num{font-size:15px;font-weight:500;color:var(--text2)}
+.nav{display:flex;background:var(--bg2);border-top:0.5px solid var(--border);flex-shrink:0}
+.nav-btn{flex:1;padding:12px 6px 14px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text3);border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.05em;transition:color .15s}
+.nav-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5}
+.nav-btn.active{color:var(--accent)}
+.content{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 16px 16px}
+.content::-webkit-scrollbar{display:none}
+.screen{display:none}
+.screen.active{display:block}
+/* TODAY */
+.today-hero{padding:16px 0 20px}
+.today-date{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px}
+.today-name{font-size:24px;font-weight:600;line-height:1.2;margin-bottom:6px}
+.today-tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:var(--accent-bg);color:var(--accent);font-weight:500}
+.session-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.stat-box{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:12px;text-align:center}
+.stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+.block-section{margin-bottom:20px}
+.block-header{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+.ex-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .2s}
+.ex-card.done{border-color:var(--accent)}
+.ex-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;gap:8px;-webkit-tap-highlight-color:transparent}
+.ex-info{flex:1;min-width:0}
+.ex-name{font-size:14px;font-weight:500}
+.ex-presc{font-size:12px;color:var(--text2);margin-top:2px}
+.ex-check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;cursor:pointer}
+.ex-check.checked{background:var(--accent);border-color:var(--accent)}
+.ex-check svg{width:12px;height:12px;stroke:#0f0f0e;fill:none;stroke-width:2.5}
+.ex-sets{display:none;padding:0 14px 12px;border-top:0.5px solid var(--border)}
+.ex-sets.open{display:block}
+.set-header-row{display:grid;grid-template-columns:28px 1fr 1fr 30px;gap:8px;padding:6px 0 4px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.set-header-row span{text-align:center}
+.set-row{display:grid;grid-template-columns:28px 1fr 1fr 30px;gap:8px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)}
+.set-row:last-of-type{border-bottom:none}
+.set-num{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center}
+.set-input{background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:7px 6px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);text-align:center;width:100%;-webkit-appearance:none}
+.set-input:focus{outline:none;border-color:var(--accent)}
+.set-done-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.set-done-btn.done{background:var(--accent);border-color:var(--accent)}
+.set-done-btn svg{width:12px;height:12px;stroke:#0f0f0e;fill:none;stroke-width:2.5}
+.add-set-btn{width:100%;margin-top:8px;padding:8px;border:0.5px dashed var(--border2);border-radius:var(--r);background:none;color:var(--text3);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.add-set-btn:active{color:var(--accent);border-color:var(--accent)}
+.complete-session-btn{width:100%;padding:15px;margin-top:8px;margin-bottom:24px;background:var(--accent);color:#0f0f0e;border:none;border-radius:var(--r2);font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s}
+.complete-session-btn:active{opacity:.85}
+.complete-session-btn.done-state{background:var(--bg3);color:var(--accent);border:0.5px solid var(--accent)}
+/* PROGRESS */
+.metric-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.metric-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:14px}
+.metric-val{font-size:26px;font-weight:500;font-family:'DM Mono',monospace}
+.metric-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.section-head{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 10px}
+.log-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px}
+.log-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.log-card-day{font-size:13px;font-weight:500}
+.log-card-date{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.pr-badge{display:inline-block;font-size:10px;background:var(--accent-bg);color:var(--accent);padding:2px 7px;border-radius:20px;margin-left:6px;font-weight:500}
+.str-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.str-row:last-child{border-bottom:none}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;font-size:14px}
+.del-btn:active{color:var(--red)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+/* MEALS */
+.meal-targets{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:16px}
+.macro-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.macro-item{text-align:center}
+.macro-val{font-size:20px;font-weight:500;font-family:'DM Mono',monospace}
+.macro-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.macro-bar{height:3px;border-radius:2px;background:var(--bg4);margin-top:6px}
+.macro-fill{height:100%;border-radius:2px}
+.meal-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.meal-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.meal-title{font-size:13px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.meal-time{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.meal-item-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.meal-item-row:last-child{border-bottom:none}
+.meal-item-macros{font-size:11px;color:var(--text3);flex-shrink:0;margin-left:8px}
+/* CHECK-IN + FORMS */
+.ci-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:12px}
+label{font-size:12px;color:var(--text3);display:block;margin-bottom:4px}
+input,select,textarea{width:100%;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--r);padding:9px 11px;outline:none;transition:border-color .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--bg3)}
+textarea{height:72px;resize:vertical}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slider-row span:first-child{font-size:13px;color:var(--text2);min-width:130px}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-val{font-size:13px;font-weight:500;font-family:'DM Mono',monospace;min-width:24px;text-align:right}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-row.full{grid-template-columns:1fr}
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:#0f0f0e;border:none;border-radius:var(--r);font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .15s}
+.btn-primary:active{opacity:.85}
+.ci-entry{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;font-size:13px}
+.ci-entry-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ci-entry-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px;font-size:12px}
+.tag-pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg3);color:var(--text3);margin-right:4px;margin-top:4px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0f0f0e;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="app-title">PHASE 1 · WKS 1–4</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--text3)" id="sync-label">ready</span>
+        <div class="sync-dot" id="sync-dot"></div>
+      </div>
+    </div>
+    <div class="week-strip" id="week-strip"></div>
+  </div>
+
+  <div class="content" id="main-content">
+    <div class="screen active" id="screen-today"><div id="today-content"></div></div>
+    <div class="screen" id="screen-progress">
+      <div style="padding-top:16px">
+        <div class="metric-row" id="metric-cards"></div>
+        <div class="section-head">Log a lift</div>
+        <div class="ci-card" style="padding:14px">
+          <div class="form-row">
+            <div><label>Exercise</label>
+              <select id="str-ex">
+                <option>Trap bar deadlift</option><option>Romanian deadlift</option>
+                <option>Deadlift (conventional)</option><option>Squat</option>
+                <option>Incline dumbbell press</option><option>Pull-ups (weighted)</option>
+                <option>Cable row</option><option>Goblet squat</option>
+                <option>Bulgarian split squat</option><option>Nordic hamstring curl</option>
+              </select>
+            </div>
+            <div><label>Weight (lbs)</label><input type="number" id="str-weight" placeholder="275" inputmode="decimal"></div>
+          </div>
+          <div class="form-row">
+            <div><label>Sets × Reps</label><input type="text" id="str-sets" placeholder="4x6"></div>
+            <div><label>Date</label><input type="date" id="str-date"></div>
+          </div>
+          <button class="btn-primary" onclick="saveStrength()">Save lift</button>
+        </div>
+        <div class="section-head">Strength history</div>
+        <div id="strength-list"></div>
+        <div class="section-head">Session history</div>
+        <div id="session-history"></div>
+      </div>
+    </div>
+    <div class="screen" id="screen-meals">
+      <div style="padding-top:16px">
+        <div class="meal-targets">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:500">Daily targets</span>
+            <span style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace">~2,700 kcal</span>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Recomp phase · mild deficit</div>
+          <div class="macro-bars">
+            <div class="macro-item"><div class="macro-val" style="color:var(--accent)">210g</div><div class="macro-lbl">Protein</div><div class="macro-bar"><div class="macro-fill" style="width:100%;background:var(--accent)"></div></div></div>
+            <div class="macro-item"><div class="macro-val" style="color:var(--blue)">270g</div><div class="macro-lbl">Carbs</div><div class="macro-bar"><div class="macro-fill" style="width:100%;background:var(--blue)"></div></div></div>
+            <div class="macro-item"><div class="macro-val" style="color:var(--amber)">70g</div><div class="macro-lbl">Fats</div><div class="macro-bar"><div class="macro-fill" style="width:100%;background:var(--amber)"></div></div></div>
+          </div>
+        </div>
+        <div id="meal-plan-content"></div>
+      </div>
+    </div>
+    <div class="screen" id="screen-checkin">
+      <div style="padding-top:16px">
+        <div class="ci-card">
+          <div style="font-size:15px;font-weight:500;margin-bottom:14px">Weekly check-in</div>
+          <div style="margin-bottom:10px"><label>Week ending</label><input type="date" id="ci-date"></div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Training</div>
+          <div class="slider-row"><span>Sessions done</span><input type="range" min="0" max="7" step="1" value="4" id="ci-sessions" oninput="sv('ci-sessions','ci-sv1')"><span class="slider-val" id="ci-sv1">4</span></div>
+          <div class="slider-row"><span>Fatigue</span><input type="range" min="1" max="10" value="5" id="ci-fatigue" oninput="sv('ci-fatigue','ci-sv2')"><span class="slider-val" id="ci-sv2">5</span></div>
+          <div style="margin-bottom:10px"><label>PRs / improvements</label><input type="text" id="ci-prs" placeholder="e.g. RDLs +10 lbs, sprints smoother"></div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;margin-top:16px">QL / Back</div>
+          <div class="slider-row"><span>Pain level (0=none)</span><input type="range" min="0" max="10" value="3" id="ci-ql" oninput="sv('ci-ql','ci-sv3')"><span class="slider-val" id="ci-sv3">3</span></div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;margin-top:16px">Recovery</div>
+          <div class="slider-row"><span>Avg sleep (hrs)</span><input type="range" min="4" max="10" step="0.5" value="7" id="ci-sleep" oninput="sv('ci-sleep','ci-sv4')"><span class="slider-val" id="ci-sv4">7</span></div>
+          <div class="slider-row"><span>Stress</span><input type="range" min="1" max="10" value="5" id="ci-stress" oninput="sv('ci-stress','ci-sv5')"><span class="slider-val" id="ci-sv5">5</span></div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;margin-top:16px">Pliability + Nutrition</div>
+          <div class="form-row">
+            <div><label>Pliability</label><select id="ci-pliability"><option>Every session</option><option>Most sessions</option><option>Hit or miss</option><option>Skipped most</option></select></div>
+            <div><label>Nutrition</label><select id="ci-nutrition"><option>On target</option><option>Hit protein only</option><option>Inconsistent</option><option>Off track</option></select></div>
+          </div>
+          <div class="form-row full"><div><label>Notes</label><textarea id="ci-notes" placeholder="Golf, energy, movement quality, anything notable..."></textarea></div></div>
+          <button class="btn-primary" onclick="saveCheckin()">Save check-in</button>
+        </div>
+        <div id="checkin-history"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" id="nav-today" onclick="goTo('today')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Today
+    </button>
+    <button class="nav-btn" id="nav-progress" onclick="goTo('progress')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Progress
+    </button>
+    <button class="nav-btn" id="nav-meals" onclick="goTo('meals')">
+      <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2M7 2v20M21 15V2a5 5 0 00-5 5v6h4"/></svg>
+      Meals
+    </button>
+    <button class="nav-btn" id="nav-checkin" onclick="goTo('checkin')">
+      <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Check-in
+    </button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Plan data ─────────────────────────────────────────────
+const PLAN = [
+  { day:"Monday", label:"Lower body strength", tag:"Posterior chain", blocks:[
+    { name:"Pliability warm-up", dur:"15 min", ex:[
+      {name:"Foam roll quads",presc:"90 sec/side",sets:0},
+      {name:"Foam roll hamstrings + glutes",presc:"90 sec/side",sets:0},
+      {name:"90/90 hip stretch",presc:"60 sec/side",sets:0},
+      {name:"Hip flexor kneeling stretch",presc:"45 sec/side",sets:0},
+      {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+      {name:"Glute bridges",presc:"2×15, 1 sec pause",sets:2,reps:"15"},
+      {name:"Leg swings (sagittal + frontal)",presc:"10 reps/side",sets:0}
+    ]},
+    { name:"Strength block", dur:"45 min", ex:[
+      {name:"Trap bar deadlift",presc:"4×6 @ RPE 7–8",sets:4,reps:"6"},
+      {name:"Romanian deadlift",presc:"3×10, 3-sec eccentric",sets:3,reps:"10"},
+      {name:"Bulgarian split squat",presc:"3×8/side",sets:3,reps:"8"},
+      {name:"Nordic hamstring curl",presc:"3×5",sets:3,reps:"5"},
+      {name:"Copenhagen plank",presc:"3×20 sec/side",sets:3,reps:"20s"},
+      {name:"Dead bug",presc:"3×8/side",sets:3,reps:"8"}
+    ]},
+    { name:"Cool-down pliability", dur:"12 min", ex:[
+      {name:"Supine hamstring stretch",presc:"90 sec/side",sets:0},
+      {name:"Couch stretch",presc:"90 sec/side",sets:0},
+      {name:"Pigeon pose",presc:"2 min/side",sets:0},
+      {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
+      {name:"Diaphragmatic breathing",presc:"3 min",sets:0}
+    ]}
+  ]},
+  { day:"Tuesday", label:"Upper body strength", tag:"Shoulder integrity", blocks:[
+    { name:"Pliability warm-up", dur:"15 min", ex:[
+      {name:"Thoracic foam roll",presc:"90 sec",sets:0},
+      {name:"Pec minor doorway stretch",presc:"45 sec/side",sets:0},
+      {name:"Shoulder CARs",presc:"5 reps/side",sets:0},
+      {name:"Thread the needle",presc:"5 reps/side",sets:0},
+      {name:"Band pull-aparts",presc:"2×20",sets:2,reps:"20"},
+      {name:"Wall slides",presc:"2×10",sets:2,reps:"10"},
+      {name:"Scapular push-ups",presc:"2×12",sets:2,reps:"12"}
+    ]},
+    { name:"Strength block", dur:"45 min", ex:[
+      {name:"Incline dumbbell press",presc:"4×10 @ RPE 7",sets:4,reps:"10"},
+      {name:"Cable row (neutral grip)",presc:"4×10 @ RPE 7",sets:4,reps:"10"},
+      {name:"Neutral grip pull-ups / lat pulldown",presc:"3×8–10",sets:3,reps:"10"},
+      {name:"Face pulls",presc:"4×15",sets:4,reps:"15"},
+      {name:"Landmine press",presc:"3×10/side",sets:3,reps:"10"},
+      {name:"Band external rotation",presc:"3×15/side",sets:3,reps:"15"},
+      {name:"Pallof press",presc:"3×12/side",sets:3,reps:"12"}
+    ]},
+    { name:"Cool-down pliability", dur:"10 min", ex:[
+      {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
+      {name:"Cross-body posterior shoulder",presc:"60 sec/side",sets:0},
+      {name:"Overhead lat stretch",presc:"60 sec/side",sets:0},
+      {name:"Thoracic extension over foam roll",presc:"90 sec",sets:0},
+      {name:"Wrist flexor/extensor stretch",presc:"30 sec each direction",sets:0}
+    ]}
+  ]},
+  { day:"Wednesday", label:"Cardio + sprint development", tag:"Aerobic base", blocks:[
+    { name:"Sprint warm-up", dur:"10 min", ex:[
+      {name:"Easy jog",presc:"400m",sets:0},
+      {name:"High knees",presc:"2×20m",sets:0},
+      {name:"Butt kicks",presc:"2×20m",sets:0},
+      {name:"A-skips",presc:"2×20m",sets:0},
+      {name:"Lateral shuffles",presc:"2×20m each direction",sets:0},
+      {name:"Falling starts / lean-and-go",presc:"4×10m",sets:0}
+    ]},
+    { name:"Sprint work", dur:"20 min", ex:[
+      {name:"10m accelerations",presc:"6 reps, 90 sec recovery",sets:6,reps:"1"},
+      {name:"30m build-up sprints",presc:"4 reps, walk-back recovery",sets:4,reps:"1"},
+      {name:"Sled push",presc:"4×20m, moderate load",sets:4,reps:"20m"}
+    ]},
+    { name:"Zone 2 cardio", dur:"20 min", ex:[
+      {name:"Assault bike or treadmill",presc:"Zone 2, HR 130–145, conversational pace",sets:0}
+    ]},
+    { name:"Cool-down", dur:"5 min", ex:[
+      {name:"Easy walk",presc:"400m",sets:0},
+      {name:"Hip flexor stretch",presc:"60 sec/side",sets:0},
+      {name:"Hamstring stretch",presc:"60 sec/side",sets:0}
+    ]}
+  ]},
+  { day:"Thursday", label:"Lower body power", tag:"Athletic movement", blocks:[
+    { name:"Pliability warm-up", dur:"15 min", ex:[
+      {name:"Full body foam roll",presc:"4 min — calves → hamstrings → glutes → thoracic",sets:0},
+      {name:"Cat-cow",presc:"10 reps",sets:0},
+      {name:"Lizard pose",presc:"60 sec/side",sets:0},
+      {name:"90/90 hip rotations",presc:"10 reps/side",sets:0},
+      {name:"Box jump landing practice",presc:"2×5",sets:2,reps:"5"}
+    ]},
+    { name:"Power + athletic block", dur:"50 min", ex:[
+      {name:"Box jumps",presc:"4×4, full reset between reps",sets:4,reps:"4"},
+      {name:"Trap bar deadlift — speed focus",presc:"4×3 @ ~60% 1RM, explosive",sets:4,reps:"3"},
+      {name:"Lateral bounding",presc:"3×6/side",sets:3,reps:"6"},
+      {name:"Goblet squat — tempo",presc:"3×10 (3 sec down, 1 sec pause)",sets:3,reps:"10"},
+      {name:"Single-leg RDL",presc:"3×10/side",sets:3,reps:"10"},
+      {name:"Lateral band walks",presc:"3×20 steps/direction",sets:3,reps:"20"},
+      {name:"Sled drag (backward)",presc:"3×20m",sets:3,reps:"20m"}
+    ]},
+    { name:"Cool-down", dur:"12 min", ex:[
+      {name:"Supine hamstring stretch",presc:"90 sec/side",sets:0},
+      {name:"Couch stretch",presc:"90 sec/side",sets:0},
+      {name:"Pigeon pose",presc:"2 min/side",sets:0},
+      {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
+      {name:"Jefferson curl",presc:"2×8 bodyweight, very controlled",sets:2,reps:"8"}
+    ]}
+  ]},
+  { day:"Friday", label:"Upper body + golf conditioning", tag:"Rotational power", blocks:[
+    { name:"Pliability warm-up", dur:"15 min", ex:[
+      {name:"Thoracic foam roll",presc:"90 sec",sets:0},
+      {name:"Pec minor doorway stretch",presc:"45 sec/side",sets:0},
+      {name:"Shoulder CARs",presc:"5 reps/side",sets:0},
+      {name:"Hip CARs",presc:"5 reps/side",sets:0},
+      {name:"Band pull-aparts",presc:"2×20",sets:2,reps:"20"},
+      {name:"Thoracic rotation in quadruped",presc:"10 reps/side",sets:0}
+    ]},
+    { name:"Strength + golf block", dur:"50 min", ex:[
+      {name:"Cable rotations (golf pattern)",presc:"4×12/side, controlled speed",sets:4,reps:"12"},
+      {name:"Landmine rotations",presc:"3×10/side",sets:3,reps:"10"},
+      {name:"Dumbbell row (3-point stance)",presc:"4×10/side",sets:4,reps:"10"},
+      {name:"Rotational med ball slam",presc:"3×8/side",sets:3,reps:"8"},
+      {name:"Face pulls",presc:"3×15",sets:3,reps:"15"},
+      {name:"Rear delt fly",presc:"3×15",sets:3,reps:"15"},
+      {name:"Single-leg balance + rotation",presc:"3×10/side",sets:3,reps:"10"},
+      {name:"Wrist roller / forearm work",presc:"2 sets",sets:2,reps:"—"}
+    ]},
+    { name:"Cool-down", dur:"10 min", ex:[
+      {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
+      {name:"Cross-body posterior shoulder",presc:"60 sec/side",sets:0},
+      {name:"Overhead lat stretch",presc:"60 sec/side",sets:0},
+      {name:"Pigeon pose",presc:"90 sec/side",sets:0}
+    ]}
+  ]},
+  { day:"Saturday", label:"Long aerobic + full pliability", tag:"Base building", blocks:[
+    { name:"Cardio", dur:"30–45 min", ex:[
+      {name:"Option A — easy jog / run-walk",presc:"Zone 2, conversational. 3 min jog / 2 min walk if needed",sets:0},
+      {name:"Option B — assault bike / row erg",presc:"40 min Zone 2 steady state",sets:0}
+    ]},
+    { name:"Full pliability session", dur:"30 min", ex:[
+      {name:"Full body foam roll",presc:"5 min",sets:0},
+      {name:"Child's pose to cobra",presc:"5 reps",sets:0},
+      {name:"Pigeon pose",presc:"2 min/side",sets:0},
+      {name:"90/90 hip stretch",presc:"90 sec/side",sets:0},
+      {name:"Couch stretch",presc:"90 sec/side",sets:0},
+      {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+      {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+      {name:"Supine hamstring with strap",presc:"90 sec/side",sets:0},
+      {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
+      {name:"Diaphragmatic breathing",presc:"5 min",sets:0}
+    ]}
+  ]},
+  { day:"Sunday", label:"Rest + pliability minimum", tag:"Recovery", blocks:[
+    { name:"Daily minimum", dur:"10 min", ex:[
+      {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+      {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+      {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+      {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+      {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+    ]}
+  ]}
+];
+
+const MEALS = [
+  {name:"Meal 1 — morning",time:"7–8 AM",items:[
+    {food:"Eggs (4–5 whole)",protein:30,carbs:2,fat:20},
+    {food:"Oats (½ cup dry)",protein:5,carbs:27,fat:3},
+    {food:"Banana",protein:1,carbs:27,fat:0},
+    {food:"Coffee",protein:0,carbs:0,fat:0}
+  ]},
+  {name:"Pre-training",time:"60–90 min before",items:[
+    {food:"Chicken breast (6 oz)",protein:42,carbs:0,fat:4},
+    {food:"White rice (1 cup cooked)",protein:4,carbs:45,fat:0},
+    {food:"Handful spinach",protein:1,carbs:1,fat:0}
+  ]},
+  {name:"Post-training",time:"Within 45 min",items:[
+    {food:"Whey protein shake (40g)",protein:40,carbs:4,fat:2},
+    {food:"Rice cakes (2) or banana",protein:1,carbs:25,fat:0}
+  ]},
+  {name:"Meal 3 — evening",time:"6–8 PM",items:[
+    {food:"Salmon or lean beef (7 oz)",protein:45,carbs:0,fat:18},
+    {food:"Sweet potato or broccoli",protein:3,carbs:30,fat:0},
+    {food:"Olive oil (1 tbsp)",protein:0,carbs:0,fat:14}
+  ]},
+  {name:"Before bed (optional)",time:"9–10 PM",items:[
+    {food:"Cottage cheese (1 cup) or casein shake",protein:30,carbs:6,fat:5}
+  ]}
+];
+
+// ── Utilities ─────────────────────────────────────────────
+function today(){return new Date().toISOString().slice(0,10)}
+function getDayIdx(date){const d=new Date(date+'T12:00:00');return d.getDay()===0?6:d.getDay()-1}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function setSyncState(s){
+  const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+  if(s==='syncing'){dot.style.background='var(--amber)';lbl.textContent='saving...'}
+  else if(s==='error'){dot.style.background='var(--red)';lbl.textContent='offline'}
+  else{dot.style.background='var(--accent)';lbl.textContent='synced'}
+}
+
+// ── Storage — cloud with localStorage fallback ────────────
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+async function dbGet(k){
+  try{const r=await window.storage.get(k);return r?JSON.parse(r.value):null}
+  catch(e){return lsGet(k)}
+}
+async function dbSet(k,v){
+  try{await window.storage.set(k,JSON.stringify(v));lsSet(k,v)}
+  catch(e){lsSet(k,v)}
+}
+
+// ── App state ─────────────────────────────────────────────
+let currentDate=today(),openEx={},sessionData={};
+
+// ── Week strip ────────────────────────────────────────────
+async function buildWeekStrip(){
+  const strip=document.getElementById('week-strip');
+  const base=new Date(currentDate+'T12:00:00');
+  const dow=base.getDay();
+  const mon=new Date(base);mon.setDate(base.getDate()-(dow===0?6:dow-1));
+  const logs=await dbGet('tplogs')||[];
+  const loggedDates=new Set(logs.map(l=>l.date));
+  strip.innerHTML='';
+  ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach((name,i)=>{
+    const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const iso=d.toISOString().slice(0,10);
+    const pill=document.createElement('div');
+    pill.className='day-pill'+(iso===currentDate?' active':'')+(loggedDates.has(iso)&&iso!==currentDate?' logged':'');
+    pill.innerHTML=`<span class="dp-name">${name}</span><span class="dp-num">${d.getDate()}</span>`;
+    pill.onclick=()=>{currentDate=iso;openEx={};buildWeekStrip();loadAndRenderToday()};
+    strip.appendChild(pill);
+  });
+}
+
+// ── Today screen ──────────────────────────────────────────
+async function loadAndRenderToday(){
+  const saved=await dbGet('session-'+currentDate);
+  sessionData=saved||{};
+  renderToday();
+}
+
+function renderToday(){
+  const plan=PLAN[getDayIdx(currentDate)];
+  const d=new Date(currentDate+'T12:00:00');
+  const dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const totalEx=plan.blocks.reduce((a,b)=>a+b.ex.length,0);
+
+  let html=`<div class="today-hero">
+    <div class="today-date">${dateStr}</div>
+    <div class="today-name">${plan.label}</div>
+    <div class="today-tag">${plan.tag}</div>
+  </div>
+  <div class="session-stats">
+    <div class="stat-box"><div class="stat-val">${plan.blocks.length}</div><div class="stat-lbl">Blocks</div></div>
+    <div class="stat-box"><div class="stat-val">${totalEx}</div><div class="stat-lbl">Exercises</div></div>
+    <div class="stat-box"><div class="stat-val" id="done-count">0</div><div class="stat-lbl">Done</div></div>
+  </div>`;
+
+  plan.blocks.forEach((block,bi)=>{
+    html+=`<div class="block-section"><div class="block-header">${block.name} <span style="color:var(--text3);font-weight:400">· ${block.dur}</span></div>`;
+    block.ex.forEach((ex,ei)=>{
+      const k=`${currentDate}_${bi}_${ei}`;
+      const sv=sessionData[k]||{sets:[],done:false};
+      html+=`<div class="ex-card${sv.done?' done':''}" id="ec-${k}">
+        <div class="ex-card-header" onclick="toggleEx('${k}',${ex.sets})">
+          <div class="ex-info"><div class="ex-name">${ex.name}</div><div class="ex-presc">${ex.presc}</div></div>
+          <div class="ex-check${sv.done?' checked':''}" onclick="event.stopPropagation();toggleDone('${k}')">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg>
+          </div>
+        </div>`;
+      if(ex.sets>0){
+        const sc=sv.sets.length>0?sv.sets.length:ex.sets;
+        html+=`<div class="ex-sets${openEx[k]?' open':''}" id="es-${k}">
+          <div class="set-header-row"><span>#</span><span>Weight</span><span>Reps</span><span></span></div>`;
+        for(let s=0;s<sc;s++){
+          const sd=sv.sets[s]||{};
+          html+=`<div class="set-row" id="sr-${k}-${s}">
+            <span class="set-num">${s+1}</span>
+            <input class="set-input" type="number" placeholder="lbs" value="${sd.weight||''}" inputmode="decimal" oninput="setField('${k}',${s},'weight',this.value)">
+            <input class="set-input" type="text" placeholder="${ex.reps||''}" value="${sd.reps||''}" oninput="setField('${k}',${s},'reps',this.value)">
+            <button class="set-done-btn${sd.done?' done':''}" onclick="toggleSetDone('${k}',${s})">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="#0f0f0e" fill="none" stroke-width="2.5"><polyline points="20 6 9 13 4 10"/></svg>
+            </button>
+          </div>`;
+        }
+        html+=`<button class="add-set-btn" onclick="addSet('${k}','${ex.reps||''}')">+ add set</button></div>`;
+      }
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`<button class="complete-session-btn" id="complete-btn" onclick="completeSession()">Complete session</button>`;
+  document.getElementById('today-content').innerHTML=html;
+  updateDoneCount();
+}
+
+function toggleEx(k,numSets){
+  if(numSets===0)return;
+  openEx[k]=!openEx[k];
+  const el=document.getElementById('es-'+k);
+  if(el)el.classList.toggle('open',openEx[k]);
+}
+function toggleDone(k){
+  if(!sessionData[k])sessionData[k]={sets:[],done:false};
+  sessionData[k].done=!sessionData[k].done;
+  const card=document.getElementById('ec-'+k);
+  const check=card&&card.querySelector('.ex-check');
+  if(card)card.classList.toggle('done',sessionData[k].done);
+  if(check)check.classList.toggle('checked',sessionData[k].done);
+  updateDoneCount();debounceSave();
+}
+function toggleSetDone(k,si){
+  if(!sessionData[k])sessionData[k]={sets:[],done:false};
+  if(!sessionData[k].sets[si])sessionData[k].sets[si]={};
+  sessionData[k].sets[si].done=!sessionData[k].sets[si].done;
+  const btn=document.getElementById('sr-'+k+'-'+si)?.querySelector('.set-done-btn');
+  if(btn)btn.classList.toggle('done',sessionData[k].sets[si].done);
+  debounceSave();
+}
+function setField(k,si,field,val){
+  if(!sessionData[k])sessionData[k]={sets:[],done:false};
+  if(!sessionData[k].sets[si])sessionData[k].sets[si]={};
+  sessionData[k].sets[si][field]=val;debounceSave();
+}
+function addSet(k,defReps){
+  if(!sessionData[k])sessionData[k]={sets:[],done:false};
+  const si=sessionData[k].sets.length;
+  sessionData[k].sets.push({weight:'',reps:'',done:false});
+  const container=document.getElementById('es-'+k);
+  if(container){
+    const row=document.createElement('div');
+    row.className='set-row';row.id=`sr-${k}-${si}`;
+    row.innerHTML=`<span class="set-num">${si+1}</span>
+      <input class="set-input" type="number" placeholder="lbs" inputmode="decimal" oninput="setField('${k}',${si},'weight',this.value)">
+      <input class="set-input" type="text" placeholder="${defReps}" oninput="setField('${k}',${si},'reps',this.value)">
+      <button class="set-done-btn" onclick="toggleSetDone('${k}',${si})">
+        <svg viewBox="0 0 24 24" width="12" height="12" stroke="#0f0f0e" fill="none" stroke-width="2.5"><polyline points="20 6 9 13 4 10"/></svg>
+      </button>`;
+    container.querySelector('.add-set-btn').before(row);
+  }
+  debounceSave();
+}
+function updateDoneCount(){
+  const plan=PLAN[getDayIdx(currentDate)];
+  let done=0;
+  plan.blocks.forEach((b,bi)=>b.ex.forEach((_,ei)=>{if(sessionData[`${currentDate}_${bi}_${ei}`]?.done)done++;}));
+  const el=document.getElementById('done-count');if(el)el.textContent=done;
+}
+async function completeSession(){
+  const plan=PLAN[getDayIdx(currentDate)];
+  const logs=await dbGet('tplogs')||[];
+  const log={id:Date.now(),date:currentDate,day:plan.day,label:plan.label,completed:new Date().toISOString()};
+  const idx=logs.findIndex(l=>l.date===currentDate);
+  if(idx>=0)logs[idx]=log;else logs.unshift(log);
+  setSyncState('syncing');
+  await dbSet('tplogs',logs);
+  await dbSet('session-'+currentDate,sessionData);
+  setSyncState('synced');
+  buildWeekStrip();
+  const btn=document.getElementById('complete-btn');
+  if(btn){btn.textContent='✓ Session saved';btn.classList.add('done-state')}
+  showToast('Session saved!');
+}
+let saveTimer;
+function debounceSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    setSyncState('syncing');
+    await dbSet('session-'+currentDate,sessionData);
+    setSyncState('synced');
+  },1000);
+}
+
+// ── Progress screen ───────────────────────────────────────
+async function renderProgress(){
+  const logs=await dbGet('tplogs')||[];
+  const checkins=await dbGet('tpcheckins')||[];
+  const strength=await dbGet('tpstrength')||[];
+  const lastFat=checkins.length?checkins[0].fatigue:'—';
+  const avgSleep=checkins.length?(checkins.slice(0,4).reduce((a,c)=>a+parseFloat(c.sleep||0),0)/Math.min(checkins.length,4)).toFixed(1):'—';
+  document.getElementById('metric-cards').innerHTML=`
+    <div class="metric-card"><div class="metric-val" style="color:var(--accent)">${logs.length}</div><div class="metric-lbl">Sessions</div></div>
+    <div class="metric-card"><div class="metric-val">${strength.length}</div><div class="metric-lbl">Lifts logged</div></div>
+    <div class="metric-card"><div class="metric-val" style="color:${parseInt(lastFat)>=7?'var(--red)':'var(--text)'}">${lastFat}</div><div class="metric-lbl">Last fatigue</div></div>
+    <div class="metric-card"><div class="metric-val" style="color:var(--blue)">${avgSleep}</div><div class="metric-lbl">Avg sleep</div></div>`;
+  const bests={};
+  strength.forEach(e=>{if(!bests[e.exercise]||parseFloat(e.weight)>parseFloat(bests[e.exercise]))bests[e.exercise]=parseFloat(e.weight)});
+  const strEl=document.getElementById('strength-list');
+  if(!strength.length){strEl.innerHTML='<div class="empty-state">No lifts logged yet</div>'}
+  else{strEl.innerHTML=`<div class="ci-card" style="padding:0 14px">`+strength.map(e=>`
+    <div class="str-row">
+      <span>${e.exercise}${parseFloat(e.weight)>=bests[e.exercise]?'<span class="pr-badge">PR</span>':''}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:13px">${e.weight} lbs</span>
+      <span style="color:var(--text3);font-size:12px">${e.sets}</span>
+      <button class="del-btn" onclick="deleteStrength(${e.id})">✕</button>
+    </div>`).join('')+`</div>`}
+  const histEl=document.getElementById('session-history');
+  if(!logs.length){histEl.innerHTML='<div class="empty-state">No sessions logged yet</div>'}
+  else{histEl.innerHTML=logs.slice(0,20).map(l=>`
+    <div class="log-card">
+      <div class="log-card-top"><span class="log-card-day">${l.label||l.day}</span><span class="log-card-date">${l.date}</span></div>
+      <div style="font-size:12px;color:var(--text3)">${l.day}</div>
+    </div>`).join('')}
+  document.getElementById('str-date').value=today();
+}
+async function saveStrength(){
+  const w=document.getElementById('str-weight').value;
+  if(!w){showToast('Enter a weight');return}
+  const e={id:Date.now(),exercise:document.getElementById('str-ex').value,weight:w,sets:document.getElementById('str-sets').value,date:document.getElementById('str-date').value||today()};
+  const data=await dbGet('tpstrength')||[];data.unshift(e);
+  setSyncState('syncing');await dbSet('tpstrength',data);setSyncState('synced');
+  document.getElementById('str-weight').value='';document.getElementById('str-sets').value='';
+  showToast('Lift saved!');renderProgress();
+}
+async function deleteStrength(id){
+  let data=await dbGet('tpstrength')||[];data=data.filter(e=>e.id!==id);
+  await dbSet('tpstrength',data);renderProgress();
+}
+
+// ── Meals screen ──────────────────────────────────────────
+function renderMeals(){
+  let html='';
+  MEALS.forEach(meal=>{
+    const totP=meal.items.reduce((a,i)=>a+i.protein,0);
+    const totC=meal.items.reduce((a,i)=>a+i.carbs,0);
+    const totF=meal.items.reduce((a,i)=>a+i.fat,0);
+    html+=`<div class="meal-card">
+      <div class="meal-card-header"><span class="meal-title">${meal.name}</span><span class="meal-time">${meal.time}</span></div>
+      ${meal.items.map(i=>`<div class="meal-item-row"><span>${i.food}</span><span class="meal-item-macros">${i.protein}P · ${i.carbs}C · ${i.fat}F</span></div>`).join('')}
+      <div style="display:flex;gap:12px;margin-top:10px;padding-top:8px;border-top:0.5px solid var(--border);font-size:12px">
+        <span style="color:var(--accent)">${totP}g protein</span>
+        <span style="color:var(--blue)">${totC}g carbs</span>
+        <span style="color:var(--amber)">${totF}g fat</span>
+      </div></div>`;
+  });
+  html+=`<div class="meal-card">
+    <div class="meal-card-header"><span class="meal-title">Supplements</span><span class="meal-time">Daily</span></div>
+    <div class="meal-item-row"><span>Creatine monohydrate</span><span class="meal-item-macros">5g · any meal</span></div>
+    <div class="meal-item-row"><span>Whey protein</span><span class="meal-item-macros">as needed · post-workout</span></div>
+    <div class="meal-item-row"><span>Omega-3 fish oil</span><span class="meal-item-macros">3g EPA+DHA · with meal</span></div>
+    <div class="meal-item-row"><span>Vitamin D3</span><span class="meal-item-macros">3,000 IU · with fat meal</span></div>
+    <div class="meal-item-row"><span>Magnesium glycinate</span><span class="meal-item-macros">300mg · before bed</span></div>
+    <div class="meal-item-row"><span>Collagen + Vit C</span><span class="meal-item-macros">15g + 50mg · pre-workout</span></div>
+  </div>`;
+  document.getElementById('meal-plan-content').innerHTML=html;
+}
+
+// ── Check-in screen ───────────────────────────────────────
+function sv(id,vid){document.getElementById(vid).textContent=document.getElementById(id).value}
+async function saveCheckin(){
+  const e={id:Date.now(),date:document.getElementById('ci-date').value||today(),sessions:document.getElementById('ci-sessions').value,fatigue:document.getElementById('ci-fatigue').value,ql:document.getElementById('ci-ql').value,sleep:document.getElementById('ci-sleep').value,stress:document.getElementById('ci-stress').value,prs:document.getElementById('ci-prs').value,pliability:document.getElementById('ci-pliability').value,nutrition:document.getElementById('ci-nutrition').value,notes:document.getElementById('ci-notes').value};
+  const data=await dbGet('tpcheckins')||[];data.unshift(e);
+  setSyncState('syncing');await dbSet('tpcheckins',data);setSyncState('synced');
+  document.getElementById('ci-prs').value='';document.getElementById('ci-notes').value='';
+  showToast('Check-in saved!');renderCheckins();
+}
+async function renderCheckins(){
+  const data=await dbGet('tpcheckins')||[];
+  const el=document.getElementById('checkin-history');
+  if(!data.length){el.innerHTML='<div class="empty-state">No check-ins yet</div>';return}
+  el.innerHTML=data.map(c=>`<div class="ci-entry">
+    <div class="ci-entry-top"><span style="font-weight:500">Week ending ${c.date}</span><button class="del-btn" onclick="deleteCheckin(${c.id})">✕</button></div>
+    <div class="ci-entry-stats">
+      <span>Sessions <strong>${c.sessions}/7</strong></span>
+      <span>Fatigue <strong style="color:${parseInt(c.fatigue)>=7?'var(--red)':'var(--text)'}">${c.fatigue}/10</strong></span>
+      <span>QL <strong>${c.ql}/10</strong></span>
+      <span>Sleep <strong style="color:var(--blue)">${c.sleep}h</strong></span>
+      <span>Stress <strong>${c.stress}/10</strong></span>
+    </div>
+    <div style="margin-top:4px"><span class="tag-pill">${c.pliability}</span><span class="tag-pill">${c.nutrition}</span></div>
+    ${c.prs?`<div style="margin-top:8px;font-size:12px;color:var(--accent)">↑ ${c.prs}</div>`:''}
+    ${c.notes?`<div style="margin-top:4px;font-size:12px;color:var(--text3)">${c.notes}</div>`:''}
+  </div>`).join('');
+}
+async function deleteCheckin(id){
+  let data=await dbGet('tpcheckins')||[];data=data.filter(c=>c.id!==id);
+  await dbSet('tpcheckins',data);renderCheckins();
+}
+
+// ── Nav ───────────────────────────────────────────────────
+function goTo(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+screen).classList.add('active');
+  document.getElementById('nav-'+screen).classList.add('active');
+  document.getElementById('main-content').scrollTop=0;
+  if(screen==='progress')renderProgress();
+  if(screen==='meals')renderMeals();
+  if(screen==='checkin'){document.getElementById('ci-date').value=today();renderCheckins();}
+}
+
+// ── Init ──────────────────────────────────────────────────
+async function init(){
+  document.getElementById('ci-date').value=today();
+  await buildWeekStrip();
+  await loadAndRenderToday();
+}
+init();
+</script>
+</body>
+</html>
