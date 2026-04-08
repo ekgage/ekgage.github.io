@@ -491,5 +491,3 @@ const PLANS = [
     ]
   }
 ];
-
-const ACTIVE_PLAN = PLANS[0];
