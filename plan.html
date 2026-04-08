@@ -69,7 +69,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   <div class="page-title" id="plan-title">Phase 1</div>
   <div class="page-sub" id="plan-sub"></div>
 
-  <div class="section-head">Phase calendar</div>
+  <div class="section-head">Current phase</div>
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--accent-bg);border:0.5px solid #c8f06030"></div>Lift</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--blue-bg);border:0.5px solid #60a5fa30"></div>Cardio</div>
@@ -81,13 +81,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM
   <div class="section-head">Week notes</div>
   <div id="week-notes-container"></div>
 
+  <div class="section-head">Full plan</div>
+  <div id="full-cal-container"></div>
+
   <div class="section-head">Exercise reference</div>
   <div id="exercise-ref-container"></div>
 </div>
 
-<script src="plan-data.js"></script>
+<script src="full-plan.js"></script>
 <script>
-const PID=ACTIVE_PLAN.id;
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function todayStr(){return new Date().toISOString().slice(0,10)}
 
@@ -96,6 +98,15 @@ function addDays(dateStr,n){
   d.setDate(d.getDate()+n);
   return d.toISOString().slice(0,10);
 }
+
+function getActivePlan(){
+  const t=todayStr();
+  for(const p of PLANS){if(t>=p.startDate&&t<addDays(p.startDate,p.weeks*7))return p}
+  if(t<PLANS[0].startDate)return PLANS[0];
+  return PLANS[PLANS.length-1];
+}
+const ACTIVE_PLAN=getActivePlan();
+const PID=ACTIVE_PLAN.id;
 
 function buildCalendar(){
   const logs=lsGet(PID+':tplogs')||[];
@@ -177,12 +188,54 @@ function toggleRef(id){
   item.classList.toggle('open',!isOpen);
 }
 
+function buildFullCalendar(){
+  const days=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const todayISO=todayStr();
+  let html='';
+
+  PLANS.forEach((phase,pi)=>{
+    const logs=lsGet(phase.id+':tplogs')||[];
+    const loggedDates=new Set(logs.map(l=>l.date));
+    const isActive=phase.id===ACTIVE_PLAN.id;
+
+    html+=`<div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:12px;font-weight:600;color:${isActive?'var(--accent)':'var(--text3)'};">${phase.name}</span>
+        ${isActive?'<span style="font-size:10px;background:var(--accent-bg);color:var(--accent);padding:2px 7px;border-radius:20px;">current</span>':''}
+        <span style="font-size:11px;color:var(--text3);margin-left:auto">${phase.startDate}</span>
+      </div>
+      <div class="cal-grid">
+        <div></div>${days.map(d=>`<div class="cal-col-head">${d}</div>`).join('')}`;
+
+    for(let w=0;w<phase.weeks;w++){
+      html+=`<div class="cal-week-label">W${w+1}</div>`;
+      for(let d=0;d<7;d++){
+        const date=addDays(phase.startDate,w*7+d);
+        const type=phase.days[d].type;
+        const label=phase.days[d].label.split(' ')[0];
+        const isToday=date===todayISO;
+        const isDone=loggedDates.has(date);
+        const dateNum=parseInt(date.slice(8));
+        html+=`<div class="cal-cell ${type}${isToday?' today-cell':''}${isDone?' completed':''}">
+          <div class="cal-date">${dateNum}</div>
+          <div class="cal-chip">${label}</div>
+          <div class="cal-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+        </div>`;
+      }
+    }
+    html+=`</div></div>`;
+  });
+
+  document.getElementById('full-cal-container').innerHTML=html;
+}
+
 function init(){
   document.getElementById('plan-title').textContent=ACTIVE_PLAN.name;
   document.getElementById('plan-sub').textContent=
     `${ACTIVE_PLAN.weeks}-week plan · starts ${ACTIVE_PLAN.startDate}`;
   buildCalendar();
   buildWeekNotes();
+  buildFullCalendar();
   buildExerciseRef();
 }
 init();

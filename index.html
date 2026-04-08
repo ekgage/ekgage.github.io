@@ -281,8 +281,18 @@ textarea{height:72px;resize:vertical}
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="plan-data.js"></script>
+<script src="full-plan.js"></script>
 <script>
+// ── Derive active plan from today's date ──────────────────
+function _addDays(dateStr,n){const d=new Date(dateStr+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function getActivePlan(){
+  const t=new Date().toISOString().slice(0,10);
+  for(const p of PLANS){if(t>=p.startDate&&t<_addDays(p.startDate,p.weeks*7))return p}
+  if(t<PLANS[0].startDate)return PLANS[0];
+  return PLANS[PLANS.length-1];
+}
+const ACTIVE_PLAN=getActivePlan();
+
 // ── Storage key helpers ───────────────────────────────────
 const PID = ACTIVE_PLAN.id;
 function pk(k){return PID+':'+k}
@@ -727,7 +737,9 @@ function goTo(screen){
 
 // ── Init ──────────────────────────────────────────────────
 async function init(){
-  document.getElementById('app-title').textContent=ACTIVE_PLAN.name.toUpperCase()+' · WKS 1–'+ACTIVE_PLAN.weeks;
+  const _t=today(),_start=new Date(ACTIVE_PLAN.startDate+'T12:00:00'),_now=new Date(_t+'T12:00:00');
+  const _wk=_t<ACTIVE_PLAN.startDate?1:Math.min(Math.floor((_now-_start)/(7*864e5))+1,ACTIVE_PLAN.weeks);
+  document.getElementById('app-title').textContent=ACTIVE_PLAN.name.toUpperCase()+' · WK '+_wk+'/'+ACTIVE_PLAN.weeks;
   document.getElementById('ci-date').value=today();
   await buildWeekStrip();
   await loadAndRenderToday();
