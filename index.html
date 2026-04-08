@@ -24,7 +24,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .app-title{font-family:'DM Mono',monospace;font-size:13px;color:var(--text3);letter-spacing:0.08em}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.week-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.week-nav{display:flex;align-items:center;gap:6px;padding-bottom:12px}
+.week-nav-btn{flex-shrink:0;width:32px;height:32px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;padding:0}
+.week-nav-btn:active{border-color:var(--accent);color:var(--accent)}
+.week-nav-btn:disabled{opacity:.25;cursor:default}
+.week-strip{display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none}
 .week-strip::-webkit-scrollbar{display:none}
 .day-pill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);cursor:pointer;transition:all .15s;min-width:44px}
 .day-pill.active{background:var(--accent);border-color:var(--accent)}
@@ -32,6 +36,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .day-pill.logged .dp-num{color:var(--accent)}
 .dp-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 .dp-num{font-size:15px;font-weight:500;color:var(--text2)}
+/* Phase progress bar */
+.phase-progress{padding:0 0 10px}
+.phase-progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:11px;color:var(--text3)}
+.phase-progress-label span:first-child{font-family:'DM Mono',monospace;letter-spacing:.04em}
+.phase-bar-track{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.phase-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
 .nav{display:flex;background:var(--bg2);border-top:0.5px solid var(--border);flex-shrink:0}
 .nav-btn{flex:1;padding:10px 4px 12px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--text3);border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.05em;transition:color .15s}
 .nav-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5}
@@ -54,8 +64,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
 .shortcut-btn{width:100%;padding:12px;margin-bottom:16px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;transition:all .15s}
 .shortcut-btn:active{border-color:var(--accent);color:var(--accent)}
-.block-section{margin-bottom:20px}
-.block-header{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+.block-section{margin-bottom:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.block-header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;gap:8px}
+.block-header-left{flex:1;min-width:0}
+.block-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em}
+.block-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.block-arrow{font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.block-section.open .block-arrow{transform:rotate(180deg)}
+.block-body{display:none;padding:0 10px 10px}
+.block-body.open{display:block}
 .ex-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .2s}
 .ex-card.done{border-color:var(--accent)}
 .ex-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;gap:8px;-webkit-tap-highlight-color:transparent}
@@ -164,7 +181,15 @@ textarea{height:72px;resize:vertical}
         </div>
       </div>
     </div>
-    <div class="week-strip" id="week-strip"></div>
+    <div class="phase-progress" id="phase-progress">
+      <div class="phase-progress-label"><span id="phase-progress-label">PHASE 1 · WK 1/4</span><span id="streak-badge"></span></div>
+      <div class="phase-bar-track"><div class="phase-bar-fill" id="phase-bar-fill" style="width:0%"></div></div>
+    </div>
+    <div class="week-nav">
+      <button class="week-nav-btn" id="week-prev" onclick="shiftWeek(-1)">‹</button>
+      <div class="week-strip" id="week-strip"></div>
+      <button class="week-nav-btn" id="week-next" onclick="shiftWeek(1)">›</button>
+    </div>
   </div>
 
   <div class="content" id="main-content">
@@ -321,37 +346,104 @@ async function dbSet(k,v){
 }
 
 // ── App state ─────────────────────────────────────────────
-let currentDate=today(),openEx={},sessionData={};
+let currentDate=today(),openEx={},openBlocks={},sessionData={},weekOffset=0;
+
+// ── Plan date helpers ─────────────────────────────────────
+const PLAN_START=PLANS[0].startDate;
+const PLAN_END=_addDays(PLANS[PLANS.length-1].startDate,PLANS[PLANS.length-1].weeks*7);
+function getPlanForDate(dateStr){
+  for(const p of PLANS){if(dateStr>=p.startDate&&dateStr<_addDays(p.startDate,p.weeks*7))return p}
+  if(dateStr<PLANS[0].startDate)return PLANS[0];
+  return PLANS[PLANS.length-1];
+}
+function getMondayOfDate(dateStr){
+  const d=new Date(dateStr+'T12:00:00');
+  const dow=d.getDay();
+  d.setDate(d.getDate()-(dow===0?6:dow-1));
+  return d.toISOString().slice(0,10);
+}
 
 // ── Week strip ────────────────────────────────────────────
 async function buildWeekStrip(){
   const strip=document.getElementById('week-strip');
-  const base=new Date(currentDate+'T12:00:00');
-  const dow=base.getDay();
-  const mon=new Date(base);mon.setDate(base.getDate()-(dow===0?6:dow-1));
-  const logs=await dbGet(pk('tplogs'))||[];
-  const loggedDates=new Set(logs.map(l=>l.date));
+  // Compute monday of current display week using offset from today's week
+  const todayMon=getMondayOfDate(today());
+  const monDate=new Date(todayMon+'T12:00:00');
+  monDate.setDate(monDate.getDate()+weekOffset*7);
+  const mon=monDate.toISOString().slice(0,10);
+
+  // Gather logs across all phases for logged dots
+  const allLogged=new Set();
+  for(const p of PLANS){const logs=await dbGet(p.id+':tplogs')||[];logs.forEach(l=>allLogged.add(l.date));}
+
   strip.innerHTML='';
   ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach((name,i)=>{
-    const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const d=new Date(mon+'T12:00:00');d.setDate(d.getDate()+i);
     const iso=d.toISOString().slice(0,10);
     const pill=document.createElement('div');
-    pill.className='day-pill'+(iso===currentDate?' active':'')+(loggedDates.has(iso)&&iso!==currentDate?' logged':'');
+    pill.className='day-pill'+(iso===currentDate?' active':'')+(allLogged.has(iso)&&iso!==currentDate?' logged':'');
     pill.innerHTML=`<span class="dp-name">${name}</span><span class="dp-num">${d.getDate()}</span>`;
-    pill.onclick=()=>{currentDate=iso;openEx={};buildWeekStrip();loadAndRenderToday()};
+    pill.onclick=()=>{currentDate=iso;openEx={};openBlocks={};buildWeekStrip();loadAndRenderToday();};
     strip.appendChild(pill);
   });
+
+  // Update week nav buttons — clamp to full plan bounds
+  const prevMon=_addDays(mon,-7);
+  const nextMon=_addDays(mon,7);
+  document.getElementById('week-prev').disabled=nextMon<=PLAN_START||mon<=PLAN_START;
+  document.getElementById('week-next').disabled=prevMon>=PLAN_END||mon>=_addDays(PLAN_END,-7);
+
+  updateProgressBar();
+}
+
+function shiftWeek(dir){
+  weekOffset+=dir;
+  // Snap currentDate into the displayed week if it falls outside
+  const todayMon=getMondayOfDate(today());
+  const monDate=new Date(todayMon+'T12:00:00');
+  monDate.setDate(monDate.getDate()+weekOffset*7);
+  const mon=monDate.toISOString().slice(0,10);
+  const sun=_addDays(mon,6);
+  if(currentDate<mon||currentDate>sun){currentDate=mon;}
+  openEx={};openBlocks={};
+  buildWeekStrip();
+  loadAndRenderToday();
+}
+
+// ── Phase progress bar + streak ───────────────────────────
+async function updateProgressBar(){
+  const t=today();
+  const phase=getPlanForDate(t);
+  const start=new Date(phase.startDate+'T12:00:00');
+  const now=new Date(t+'T12:00:00');
+  const wk=t<phase.startDate?1:Math.min(Math.floor((now-start)/(7*864e5))+1,phase.weeks);
+  const pct=Math.round(((wk-1)/phase.weeks)*100+((now-start)%(7*864e5))/(7*864e5)*(100/phase.weeks));
+
+  document.getElementById('phase-progress-label').textContent=phase.name.toUpperCase()+' · WK '+wk+'/'+phase.weeks;
+  document.getElementById('phase-bar-fill').style.width=Math.min(pct,100)+'%';
+
+  // Streak: consecutive days with a log entry up to and including today
+  const allLogs=new Map();
+  for(const p of PLANS){const logs=await dbGet(p.id+':tplogs')||[];logs.forEach(l=>allLogs.set(l.date,true));}
+  let streak=0,check=t;
+  while(allLogs.has(check)){streak++;check=_addDays(check,-1);}
+  const badge=document.getElementById('streak-badge');
+  badge.textContent=streak>=2?streak+' day streak':'';
+  badge.style.color='var(--accent)';
+  badge.style.fontFamily="'DM Mono',monospace";
 }
 
 // ── Today screen ──────────────────────────────────────────
 async function loadAndRenderToday(){
-  const saved=await dbGet(pk('session-'+currentDate));
+  const dayPid=getPlanForDate(currentDate).id;
+  const saved=await dbGet(dayPid+':session-'+currentDate);
   sessionData=saved||{};
   renderToday();
 }
 
 function renderToday(){
-  const plan=ACTIVE_PLAN.days[getDayIdx(currentDate)];
+  const planForDay=getPlanForDate(currentDate);
+  const plan=planForDay.days[getDayIdx(currentDate)];
   const d=new Date(currentDate+'T12:00:00');
   const dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const totalEx=plan.blocks.reduce((a,b)=>a+b.ex.length,0);
@@ -370,7 +462,7 @@ function renderToday(){
     <div class="today-name">${plan.label}</div>
     <div class="today-meta">
       <div class="today-tag">${plan.tag}</div>
-      <a href="plan.html" class="phase-link">View full phase →</a>
+      <a href="plan.html" class="phase-link">View plan →</a>
     </div>
   </div>
   <div class="session-stats">
@@ -381,7 +473,23 @@ function renderToday(){
   ${shortcutBtn}`;
 
   plan.blocks.forEach((block,bi)=>{
-    html+=`<div class="block-section"><div class="block-header">${block.name} <span style="color:var(--text3);font-weight:400">· ${block.dur}</span></div>`;
+    // Warm-up and cool-down collapse by default; strength/power/main blocks open
+    const isSecondary=/(warm|cool|daily)/i.test(block.name);
+    const bk=`block-${currentDate}-${bi}`;
+    if(openBlocks[bk]===undefined)openBlocks[bk]=!isSecondary;
+    const blockOpen=openBlocks[bk];
+    // Count done exercises in this block
+    let blockDone=0;
+    block.ex.forEach((_,ei)=>{if(sessionData[`${currentDate}_${bi}_${ei}`]?.done)blockDone++;});
+    html+=`<div class="block-section${blockOpen?' open':''}" id="bs-${bk}">
+      <div class="block-header" onclick="toggleBlock('${bk}')">
+        <div class="block-header-left">
+          <div class="block-title">${block.name}</div>
+          <div class="block-meta">${block.dur} · ${block.ex.length} exercises${blockDone>0?' · '+blockDone+' done':''}</div>
+        </div>
+        <span class="block-arrow">▾</span>
+      </div>
+      <div class="block-body${blockOpen?' open':''}" id="bb-${bk}">`;
     block.ex.forEach((ex,ei)=>{
       const k=`${currentDate}_${bi}_${ei}`;
       const sv=sessionData[k]||{sets:[],done:false};
@@ -411,11 +519,19 @@ function renderToday(){
       }
       html+=`</div>`;
     });
-    html+=`</div>`;
+    html+=`</div></div>`;
   });
   html+=`<button class="complete-session-btn" id="complete-btn" onclick="completeSession()">Complete session</button>`;
   document.getElementById('today-content').innerHTML=html;
   updateDoneCount();
+}
+
+function toggleBlock(bk){
+  openBlocks[bk]=!openBlocks[bk];
+  const bs=document.getElementById('bs-'+bk);
+  const bb=document.getElementById('bb-'+bk);
+  if(bs)bs.classList.toggle('open',openBlocks[bk]);
+  if(bb)bb.classList.toggle('open',openBlocks[bk]);
 }
 
 function toggleEx(k,numSets){
@@ -465,22 +581,25 @@ function addSet(k,defReps){
   debounceSave();
 }
 function updateDoneCount(){
-  const plan=ACTIVE_PLAN.days[getDayIdx(currentDate)];
+  const plan=getPlanForDate(currentDate).days[getDayIdx(currentDate)];
   let done=0;
   plan.blocks.forEach((b,bi)=>b.ex.forEach((_,ei)=>{if(sessionData[`${currentDate}_${bi}_${ei}`]?.done)done++;}));
   const el=document.getElementById('done-count');if(el)el.textContent=done;
 }
 async function completeSession(){
-  const plan=ACTIVE_PLAN.days[getDayIdx(currentDate)];
-  const logs=await dbGet(pk('tplogs'))||[];
+  const planForDay=getPlanForDate(currentDate);
+  const plan=planForDay.days[getDayIdx(currentDate)];
+  const dayPid=planForDay.id;
+  const logs=await dbGet(dayPid+':tplogs')||[];
   const log={id:Date.now(),date:currentDate,day:plan.day,label:plan.label,completed:new Date().toISOString()};
   const idx=logs.findIndex(l=>l.date===currentDate);
   if(idx>=0)logs[idx]=log;else logs.unshift(log);
   setSyncState('syncing');
-  await dbSet(pk('tplogs'),logs);
-  await dbSet(pk('session-'+currentDate),sessionData);
+  await dbSet(dayPid+':tplogs',logs);
+  await dbSet(dayPid+':session-'+currentDate,sessionData);
   setSyncState('synced');
   buildWeekStrip();
+  updateProgressBar();
   const btn=document.getElementById('complete-btn');
   if(btn){btn.textContent='✓ Session saved';btn.classList.add('done-state')}
   showToast('Session saved!');
@@ -488,9 +607,10 @@ async function completeSession(){
 let saveTimer;
 function debounceSave(){
   clearTimeout(saveTimer);
+  const dayPid=getPlanForDate(currentDate).id;
   saveTimer=setTimeout(async()=>{
     setSyncState('syncing');
-    await dbSet(pk('session-'+currentDate),sessionData);
+    await dbSet(dayPid+':session-'+currentDate,sessionData);
     setSyncState('synced');
   },1000);
 }
@@ -737,9 +857,7 @@ function goTo(screen){
 
 // ── Init ──────────────────────────────────────────────────
 async function init(){
-  const _t=today(),_start=new Date(ACTIVE_PLAN.startDate+'T12:00:00'),_now=new Date(_t+'T12:00:00');
-  const _wk=_t<ACTIVE_PLAN.startDate?1:Math.min(Math.floor((_now-_start)/(7*864e5))+1,ACTIVE_PLAN.weeks);
-  document.getElementById('app-title').textContent=ACTIVE_PLAN.name.toUpperCase()+' · WK '+_wk+'/'+ACTIVE_PLAN.weeks;
+  document.getElementById('app-title').textContent='TRAINING TRACKER';
   document.getElementById('ci-date').value=today();
   await buildWeekStrip();
   await loadAndRenderToday();
