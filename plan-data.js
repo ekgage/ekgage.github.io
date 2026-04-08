@@ -2,7 +2,7 @@ const ACTIVE_PLAN = {
   id: "phase1",
   name: "Phase 1",
   weeks: 4,
-  startDate: "2026-03-30",
+  startDate: "2026-04-13",
   weekNotes: [
     "Week 1 — Establish baseline. Focus on form and RPE calibration.",
     "Week 2 — Add load on main lifts where RPE allows.",
