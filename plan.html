@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Phase 1 — Full Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0e;--bg2:#181817;--bg3:#222220;--bg4:#2a2a28;
+  --border:#ffffff14;--border2:#ffffff22;
+  --text:#f0eeea;--text2:#9f9f9b;--text3:#6b6b67;
+  --accent:#c8f060;--accent-bg:#c8f06018;
+  --blue:#60a5fa;--blue-bg:#60a5fa18;
+  --r:10px;--r2:14px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5}
+.page{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);text-decoration:none;margin-bottom:20px;-webkit-tap-highlight-color:transparent}
+.back-link:active{color:var(--text)}
+.page-title{font-size:22px;font-weight:600;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:28px}
+.section-head{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:28px 0 12px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+/* Calendar grid */
+.cal-grid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:4px;margin-bottom:8px;font-size:11px}
+.cal-col-head{text-align:center;color:var(--text3);padding:4px 2px;font-weight:500;letter-spacing:.04em}
+.cal-week-label{display:flex;align-items:center;padding-right:8px;color:var(--text3);font-size:11px;font-family:'DM Mono',monospace;white-space:nowrap}
+.cal-cell{border-radius:7px;padding:5px 3px;text-align:center;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0.5px solid var(--border)}
+.cal-cell.lift{background:var(--accent-bg);border-color:#c8f06030}
+.cal-cell.cardio{background:var(--blue-bg);border-color:#60a5fa30}
+.cal-cell.rest{background:transparent}
+.cal-cell.today-cell{border-color:var(--accent);border-width:1px}
+.cal-cell.completed .cal-check{display:flex}
+.cal-date{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.cal-chip{font-size:9px;font-weight:500;letter-spacing:.03em;line-height:1.2;text-align:center}
+.cal-cell.lift .cal-chip{color:var(--accent)}
+.cal-cell.cardio .cal-chip{color:var(--blue)}
+.cal-cell.rest .cal-chip{color:var(--text3)}
+.cal-check{width:14px;height:14px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;flex-shrink:0}
+.cal-check svg{width:8px;height:8px;stroke:#0f0f0e;fill:none;stroke-width:2.5}
+/* Week notes */
+.week-note{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px}
+.week-note-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:3px}
+.week-note-text{font-size:13px;color:var(--text2)}
+/* Exercise reference */
+.day-ref{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.day-ref-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.day-ref-name{font-size:14px;font-weight:500}
+.day-ref-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.day-ref-arrow{font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.day-ref-body{display:none;border-top:0.5px solid var(--border)}
+.day-ref-body.open{display:block}
+.day-ref.open .day-ref-arrow{transform:rotate(180deg)}
+.ref-block{padding:10px 14px 6px}
+.ref-block-name{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.ref-ex-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:0.5px solid var(--border);gap:8px}
+.ref-ex-row:last-child{border-bottom:none}
+.ref-ex-name{font-size:13px}
+.ref-ex-presc{font-size:12px;color:var(--text3);text-align:right;flex-shrink:0}
+.legend{display:flex;gap:14px;margin-bottom:16px;font-size:12px}
+.legend-item{display:flex;align-items:center;gap:5px;color:var(--text3)}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <a href="index.html" class="back-link">← Back to tracker</a>
+  <div class="page-title" id="plan-title">Phase 1</div>
+  <div class="page-sub" id="plan-sub"></div>
+
+  <div class="section-head">Phase calendar</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-bg);border:0.5px solid #c8f06030"></div>Lift</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue-bg);border:0.5px solid #60a5fa30"></div>Cardio</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--bg2);border:0.5px solid var(--border)"></div>Rest</div>
+    <div class="legend-item"><div class="cal-check" style="display:inline-flex"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>Done</div>
+  </div>
+  <div id="cal-grid-container"></div>
+
+  <div class="section-head">Week notes</div>
+  <div id="week-notes-container"></div>
+
+  <div class="section-head">Exercise reference</div>
+  <div id="exercise-ref-container"></div>
+</div>
+
+<script src="plan-data.js"></script>
+<script>
+const PID=ACTIVE_PLAN.id;
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+function todayStr(){return new Date().toISOString().slice(0,10)}
+
+function addDays(dateStr,n){
+  const d=new Date(dateStr+'T12:00:00');
+  d.setDate(d.getDate()+n);
+  return d.toISOString().slice(0,10);
+}
+
+function buildCalendar(){
+  const logs=lsGet(PID+':tplogs')||[];
+  const loggedDates=new Set(logs.map(l=>l.date));
+  const todayISO=todayStr();
+  const days=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const dayTypes=['lift','lift','cardio','lift','lift','cardio','rest'];
+  const dayLabels=['Lower','Upper','Cardio','Power','Golf','Cardio','Rest'];
+
+  let gridHtml=`<div class="cal-grid">
+    <div></div>
+    ${days.map(d=>`<div class="cal-col-head">${d}</div>`).join('')}`;
+
+  for(let w=0;w<ACTIVE_PLAN.weeks;w++){
+    gridHtml+=`<div class="cal-week-label">W${w+1}</div>`;
+    for(let d=0;d<7;d++){
+      const date=addDays(ACTIVE_PLAN.startDate,w*7+d);
+      const type=dayTypes[d];
+      const label=dayLabels[d];
+      const isToday=date===todayISO;
+      const isDone=loggedDates.has(date);
+      const dateNum=parseInt(date.slice(8));
+      gridHtml+=`<div class="cal-cell ${type}${isToday?' today-cell':''}${isDone?' completed':''}">
+        <div class="cal-date">${dateNum}</div>
+        <div class="cal-chip">${label}</div>
+        <div class="cal-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+      </div>`;
+    }
+  }
+  gridHtml+=`</div>`;
+  document.getElementById('cal-grid-container').innerHTML=gridHtml;
+}
+
+function buildWeekNotes(){
+  let html='';
+  ACTIVE_PLAN.weekNotes.forEach((note,i)=>{
+    html+=`<div class="week-note">
+      <div class="week-note-label">Week ${i+1}</div>
+      <div class="week-note-text">${note.replace(/^Week \d+ — /,'')}</div>
+    </div>`;
+  });
+  document.getElementById('week-notes-container').innerHTML=html;
+}
+
+function buildExerciseRef(){
+  let html='';
+  ACTIVE_PLAN.days.forEach((day,i)=>{
+    const id='ref-day-'+i;
+    const totalEx=day.blocks.reduce((a,b)=>a+b.ex.length,0);
+    html+=`<div class="day-ref" id="${id}">
+      <div class="day-ref-header" onclick="toggleRef('${id}')">
+        <div>
+          <div class="day-ref-name">${day.day}</div>
+          <div class="day-ref-sub">${day.label} · ${totalEx} exercises</div>
+        </div>
+        <span class="day-ref-arrow">▾</span>
+      </div>
+      <div class="day-ref-body" id="body-${id}">
+        ${day.blocks.map(block=>`
+          <div class="ref-block">
+            <div class="ref-block-name">${block.name} · ${block.dur}</div>
+            ${block.ex.map(ex=>`
+              <div class="ref-ex-row">
+                <span class="ref-ex-name">${ex.name}</span>
+                <span class="ref-ex-presc">${ex.presc}</span>
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('exercise-ref-container').innerHTML=html;
+}
+
+function toggleRef(id){
+  const item=document.getElementById(id);
+  const body=item.querySelector('.day-ref-body');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  item.classList.toggle('open',!isOpen);
+}
+
+function init(){
+  document.getElementById('plan-title').textContent=ACTIVE_PLAN.name;
+  document.getElementById('plan-sub').textContent=
+    `${ACTIVE_PLAN.weeks}-week plan · starts ${ACTIVE_PLAN.startDate}`;
+  buildCalendar();
+  buildWeekNotes();
+  buildExerciseRef();
+}
+init();
+</script>
+</body>
+</html>

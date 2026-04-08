@@ -33,7 +33,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .dp-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 .dp-num{font-size:15px;font-weight:500;color:var(--text2)}
 .nav{display:flex;background:var(--bg2);border-top:0.5px solid var(--border);flex-shrink:0}
-.nav-btn{flex:1;padding:12px 6px 14px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text3);border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.05em;transition:color .15s}
+.nav-btn{flex:1;padding:10px 4px 12px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--text3);border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.05em;transition:color .15s}
 .nav-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5}
 .nav-btn.active{color:var(--accent)}
 .content{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 16px 16px}
@@ -44,11 +44,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .today-hero{padding:16px 0 20px}
 .today-date{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px}
 .today-name{font-size:24px;font-weight:600;line-height:1.2;margin-bottom:6px}
+.today-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .today-tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:var(--accent-bg);color:var(--accent);font-weight:500}
+.phase-link{font-size:12px;color:var(--text3);text-decoration:none;padding:3px 10px;border-radius:20px;border:0.5px solid var(--border2);transition:color .15s}
+.phase-link:active{color:var(--text)}
 .session-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
 .stat-box{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:12px;text-align:center}
 .stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace}
 .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+.shortcut-btn{width:100%;padding:12px;margin-bottom:16px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;transition:all .15s}
+.shortcut-btn:active{border-color:var(--accent);color:var(--accent)}
 .block-section{margin-bottom:20px}
 .block-header{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
 .ex-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .2s}
@@ -77,7 +82,17 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .complete-session-btn{width:100%;padding:15px;margin-top:8px;margin-bottom:24px;background:var(--accent);color:#0f0f0e;border:none;border-radius:var(--r2);font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s}
 .complete-session-btn:active{opacity:.85}
 .complete-session-btn.done-state{background:var(--bg3);color:var(--accent);border:0.5px solid var(--accent)}
-/* PROGRESS */
+/* LIFT */
+.lift-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.lift-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:14px}
+.lift-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.lift-card-name{font-size:13px;font-weight:500;flex:1;margin-right:8px}
+.lift-card-pr{font-size:22px;font-weight:500;font-family:'DM Mono',monospace;color:var(--accent)}
+.lift-card-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.lift-card-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.lift-1rm{font-size:12px;color:var(--text2)}
+.lift-1rm span{color:var(--text3)}
+/* PROGRESS generic */
 .metric-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .metric-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:14px}
 .metric-val{font-size:26px;font-weight:500;font-family:'DM Mono',monospace}
@@ -93,21 +108,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .del-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;font-size:14px}
 .del-btn:active{color:var(--red)}
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
-/* MEALS */
-.meal-targets{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:16px}
-.macro-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
-.macro-item{text-align:center}
-.macro-val{font-size:20px;font-weight:500;font-family:'DM Mono',monospace}
-.macro-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
-.macro-bar{height:3px;border-radius:2px;background:var(--bg4);margin-top:6px}
-.macro-fill{height:100%;border-radius:2px}
-.meal-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
-.meal-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.meal-title{font-size:13px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
-.meal-time{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
-.meal-item-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:13px}
-.meal-item-row:last-child{border-bottom:none}
-.meal-item-macros{font-size:11px;color:var(--text3);flex-shrink:0;margin-left:8px}
+/* accordion */
+.accordion-item{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.accordion-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.accordion-title{font-size:13px;font-weight:500}
+.accordion-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.accordion-arrow{font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.accordion-body{display:none;padding:0 14px 12px;border-top:0.5px solid var(--border)}
+.accordion-body.open{display:block}
+.accordion-item.open .accordion-arrow{transform:rotate(180deg)}
+/* CARDIO */
+.cardio-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+/* MOBILITY */
+.mob-check-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mob-check-item.checked{border-color:var(--accent)}
+.mob-checkbox{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.mob-check-item.checked .mob-checkbox{background:var(--accent);border-color:var(--accent)}
+.mob-checkbox svg{width:11px;height:11px;stroke:#0f0f0e;fill:none;stroke-width:2.5;display:none}
+.mob-check-item.checked .mob-checkbox svg{display:block}
+.mob-item-name{font-size:13px;font-weight:500}
+.mob-item-presc{font-size:12px;color:var(--text2);margin-top:1px}
 /* CHECK-IN + FORMS */
 .ci-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:12px}
 label{font-size:12px;color:var(--text3);display:block;margin-bottom:4px}
@@ -135,20 +155,26 @@ textarea{height:72px;resize:vertical}
 <div class="app">
   <div class="topbar">
     <div class="topbar-row">
-      <span class="app-title">PHASE 1 · WKS 1–4</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:var(--text3)" id="sync-label">ready</span>
-        <div class="sync-dot" id="sync-dot"></div>
+      <span class="app-title" id="app-title">PHASE 1 · WKS 1–4</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="plan.html" style="font-size:11px;color:var(--text3);text-decoration:none;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border2);letter-spacing:.04em;-webkit-tap-highlight-color:transparent">Full plan</a>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:11px;color:var(--text3)" id="sync-label">ready</span>
+          <div class="sync-dot" id="sync-dot"></div>
+        </div>
       </div>
     </div>
     <div class="week-strip" id="week-strip"></div>
   </div>
 
   <div class="content" id="main-content">
+    <!-- TODAY -->
     <div class="screen active" id="screen-today"><div id="today-content"></div></div>
-    <div class="screen" id="screen-progress">
+
+    <!-- LIFT -->
+    <div class="screen" id="screen-lift">
       <div style="padding-top:16px">
-        <div class="metric-row" id="metric-cards"></div>
+        <div id="lift-dashboard"></div>
         <div class="section-head">Log a lift</div>
         <div class="ci-card" style="padding:14px">
           <div class="form-row">
@@ -171,28 +197,39 @@ textarea{height:72px;resize:vertical}
         </div>
         <div class="section-head">Strength history</div>
         <div id="strength-list"></div>
-        <div class="section-head">Session history</div>
-        <div id="session-history"></div>
       </div>
     </div>
-    <div class="screen" id="screen-meals">
+
+    <!-- CARDIO -->
+    <div class="screen" id="screen-cardio">
       <div style="padding-top:16px">
-        <div class="meal-targets">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:14px;font-weight:500">Daily targets</span>
-            <span style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace">~2,700 kcal</span>
+        <div class="cardio-metrics" id="cardio-metrics"></div>
+        <div class="section-head">Log a session</div>
+        <div class="ci-card" style="padding:14px">
+          <div class="form-row">
+            <div><label>Type</label>
+              <select id="cardio-type">
+                <option>Sprint work</option><option>Zone 2</option><option>Mixed</option>
+              </select>
+            </div>
+            <div><label>Duration (min)</label><input type="number" id="cardio-dur" placeholder="30" inputmode="numeric"></div>
           </div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Recomp phase · mild deficit</div>
-          <div class="macro-bars">
-            <div class="macro-item"><div class="macro-val" style="color:var(--accent)">210g</div><div class="macro-lbl">Protein</div><div class="macro-bar"><div class="macro-fill" style="width:100%;background:var(--accent)"></div></div></div>
-            <div class="macro-item"><div class="macro-val" style="color:var(--blue)">270g</div><div class="macro-lbl">Carbs</div><div class="macro-bar"><div class="macro-fill" style="width:100%;background:var(--blue)"></div></div></div>
-            <div class="macro-item"><div class="macro-val" style="color:var(--amber)">70g</div><div class="macro-lbl">Fats</div><div class="macro-bar"><div class="macro-fill" style="width:100%;background:var(--amber)"></div></div></div>
-          </div>
+          <div class="form-row full"><div><label>Notes</label><textarea id="cardio-notes" placeholder="Sprints, pace, how it felt..."></textarea></div></div>
+          <div style="margin-bottom:10px"><label>Date</label><input type="date" id="cardio-date"></div>
+          <button class="btn-primary" onclick="saveCardio()">Save session</button>
         </div>
-        <div id="meal-plan-content"></div>
+        <div class="section-head">Session history</div>
+        <div id="cardio-list"></div>
       </div>
     </div>
-    <div class="screen" id="screen-checkin">
+
+    <!-- MOBILITY -->
+    <div class="screen" id="screen-mobility">
+      <div style="padding-top:16px" id="mobility-content"></div>
+    </div>
+
+    <!-- LOG (check-in) -->
+    <div class="screen" id="screen-log">
       <div style="padding-top:16px">
         <div class="ci-card">
           <div style="font-size:15px;font-weight:500;margin-bottom:14px">Weekly check-in</div>
@@ -224,206 +261,31 @@ textarea{height:72px;resize:vertical}
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Today
     </button>
-    <button class="nav-btn" id="nav-progress" onclick="goTo('progress')">
+    <button class="nav-btn" id="nav-lift" onclick="goTo('lift')">
+      <svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="18" y2="12"/><line x1="3" y1="9" x2="6" y2="9"/><line x1="3" y1="15" x2="6" y2="15"/><line x1="18" y1="9" x2="21" y2="9"/><line x1="18" y1="15" x2="21" y2="15"/><line x1="3" y1="9" x2="3" y2="15"/><line x1="21" y1="9" x2="21" y2="15"/></svg>
+      Lift
+    </button>
+    <button class="nav-btn" id="nav-cardio" onclick="goTo('cardio')">
       <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Progress
+      Cardio
     </button>
-    <button class="nav-btn" id="nav-meals" onclick="goTo('meals')">
-      <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2M7 2v20M21 15V2a5 5 0 00-5 5v6h4"/></svg>
-      Meals
+    <button class="nav-btn" id="nav-mobility" onclick="goTo('mobility')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 7v6l-3 3"/><path d="M12 13l3 3"/><path d="M9 21l3-5 3 5"/></svg>
+      Mobility
     </button>
-    <button class="nav-btn" id="nav-checkin" onclick="goTo('checkin')">
+    <button class="nav-btn" id="nav-log" onclick="goTo('log')">
       <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-      Check-in
+      Log
     </button>
   </nav>
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="plan-data.js"></script>
 <script>
-// ── Plan data ─────────────────────────────────────────────
-const PLAN = [
-  { day:"Monday", label:"Lower body strength", tag:"Posterior chain", blocks:[
-    { name:"Pliability warm-up", dur:"15 min", ex:[
-      {name:"Foam roll quads",presc:"90 sec/side",sets:0},
-      {name:"Foam roll hamstrings + glutes",presc:"90 sec/side",sets:0},
-      {name:"90/90 hip stretch",presc:"60 sec/side",sets:0},
-      {name:"Hip flexor kneeling stretch",presc:"45 sec/side",sets:0},
-      {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
-      {name:"Glute bridges",presc:"2×15, 1 sec pause",sets:2,reps:"15"},
-      {name:"Leg swings (sagittal + frontal)",presc:"10 reps/side",sets:0}
-    ]},
-    { name:"Strength block", dur:"45 min", ex:[
-      {name:"Trap bar deadlift",presc:"4×6 @ RPE 7–8",sets:4,reps:"6"},
-      {name:"Romanian deadlift",presc:"3×10, 3-sec eccentric",sets:3,reps:"10"},
-      {name:"Bulgarian split squat",presc:"3×8/side",sets:3,reps:"8"},
-      {name:"Nordic hamstring curl",presc:"3×5",sets:3,reps:"5"},
-      {name:"Copenhagen plank",presc:"3×20 sec/side",sets:3,reps:"20s"},
-      {name:"Dead bug",presc:"3×8/side",sets:3,reps:"8"}
-    ]},
-    { name:"Cool-down pliability", dur:"12 min", ex:[
-      {name:"Supine hamstring stretch",presc:"90 sec/side",sets:0},
-      {name:"Couch stretch",presc:"90 sec/side",sets:0},
-      {name:"Pigeon pose",presc:"2 min/side",sets:0},
-      {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
-      {name:"Diaphragmatic breathing",presc:"3 min",sets:0}
-    ]}
-  ]},
-  { day:"Tuesday", label:"Upper body strength", tag:"Shoulder integrity", blocks:[
-    { name:"Pliability warm-up", dur:"15 min", ex:[
-      {name:"Thoracic foam roll",presc:"90 sec",sets:0},
-      {name:"Pec minor doorway stretch",presc:"45 sec/side",sets:0},
-      {name:"Shoulder CARs",presc:"5 reps/side",sets:0},
-      {name:"Thread the needle",presc:"5 reps/side",sets:0},
-      {name:"Band pull-aparts",presc:"2×20",sets:2,reps:"20"},
-      {name:"Wall slides",presc:"2×10",sets:2,reps:"10"},
-      {name:"Scapular push-ups",presc:"2×12",sets:2,reps:"12"}
-    ]},
-    { name:"Strength block", dur:"45 min", ex:[
-      {name:"Incline dumbbell press",presc:"4×10 @ RPE 7",sets:4,reps:"10"},
-      {name:"Cable row (neutral grip)",presc:"4×10 @ RPE 7",sets:4,reps:"10"},
-      {name:"Neutral grip pull-ups / lat pulldown",presc:"3×8–10",sets:3,reps:"10"},
-      {name:"Face pulls",presc:"4×15",sets:4,reps:"15"},
-      {name:"Landmine press",presc:"3×10/side",sets:3,reps:"10"},
-      {name:"Band external rotation",presc:"3×15/side",sets:3,reps:"15"},
-      {name:"Pallof press",presc:"3×12/side",sets:3,reps:"12"}
-    ]},
-    { name:"Cool-down pliability", dur:"10 min", ex:[
-      {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
-      {name:"Cross-body posterior shoulder",presc:"60 sec/side",sets:0},
-      {name:"Overhead lat stretch",presc:"60 sec/side",sets:0},
-      {name:"Thoracic extension over foam roll",presc:"90 sec",sets:0},
-      {name:"Wrist flexor/extensor stretch",presc:"30 sec each direction",sets:0}
-    ]}
-  ]},
-  { day:"Wednesday", label:"Cardio + sprint development", tag:"Aerobic base", blocks:[
-    { name:"Sprint warm-up", dur:"10 min", ex:[
-      {name:"Easy jog",presc:"400m",sets:0},
-      {name:"High knees",presc:"2×20m",sets:0},
-      {name:"Butt kicks",presc:"2×20m",sets:0},
-      {name:"A-skips",presc:"2×20m",sets:0},
-      {name:"Lateral shuffles",presc:"2×20m each direction",sets:0},
-      {name:"Falling starts / lean-and-go",presc:"4×10m",sets:0}
-    ]},
-    { name:"Sprint work", dur:"20 min", ex:[
-      {name:"10m accelerations",presc:"6 reps, 90 sec recovery",sets:6,reps:"1"},
-      {name:"30m build-up sprints",presc:"4 reps, walk-back recovery",sets:4,reps:"1"},
-      {name:"Sled push",presc:"4×20m, moderate load",sets:4,reps:"20m"}
-    ]},
-    { name:"Zone 2 cardio", dur:"20 min", ex:[
-      {name:"Assault bike or treadmill",presc:"Zone 2, HR 130–145, conversational pace",sets:0}
-    ]},
-    { name:"Cool-down", dur:"5 min", ex:[
-      {name:"Easy walk",presc:"400m",sets:0},
-      {name:"Hip flexor stretch",presc:"60 sec/side",sets:0},
-      {name:"Hamstring stretch",presc:"60 sec/side",sets:0}
-    ]}
-  ]},
-  { day:"Thursday", label:"Lower body power", tag:"Athletic movement", blocks:[
-    { name:"Pliability warm-up", dur:"15 min", ex:[
-      {name:"Full body foam roll",presc:"4 min — calves → hamstrings → glutes → thoracic",sets:0},
-      {name:"Cat-cow",presc:"10 reps",sets:0},
-      {name:"Lizard pose",presc:"60 sec/side",sets:0},
-      {name:"90/90 hip rotations",presc:"10 reps/side",sets:0},
-      {name:"Box jump landing practice",presc:"2×5",sets:2,reps:"5"}
-    ]},
-    { name:"Power + athletic block", dur:"50 min", ex:[
-      {name:"Box jumps",presc:"4×4, full reset between reps",sets:4,reps:"4"},
-      {name:"Trap bar deadlift — speed focus",presc:"4×3 @ ~60% 1RM, explosive",sets:4,reps:"3"},
-      {name:"Lateral bounding",presc:"3×6/side",sets:3,reps:"6"},
-      {name:"Goblet squat — tempo",presc:"3×10 (3 sec down, 1 sec pause)",sets:3,reps:"10"},
-      {name:"Single-leg RDL",presc:"3×10/side",sets:3,reps:"10"},
-      {name:"Lateral band walks",presc:"3×20 steps/direction",sets:3,reps:"20"},
-      {name:"Sled drag (backward)",presc:"3×20m",sets:3,reps:"20m"}
-    ]},
-    { name:"Cool-down", dur:"12 min", ex:[
-      {name:"Supine hamstring stretch",presc:"90 sec/side",sets:0},
-      {name:"Couch stretch",presc:"90 sec/side",sets:0},
-      {name:"Pigeon pose",presc:"2 min/side",sets:0},
-      {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
-      {name:"Jefferson curl",presc:"2×8 bodyweight, very controlled",sets:2,reps:"8"}
-    ]}
-  ]},
-  { day:"Friday", label:"Upper body + golf conditioning", tag:"Rotational power", blocks:[
-    { name:"Pliability warm-up", dur:"15 min", ex:[
-      {name:"Thoracic foam roll",presc:"90 sec",sets:0},
-      {name:"Pec minor doorway stretch",presc:"45 sec/side",sets:0},
-      {name:"Shoulder CARs",presc:"5 reps/side",sets:0},
-      {name:"Hip CARs",presc:"5 reps/side",sets:0},
-      {name:"Band pull-aparts",presc:"2×20",sets:2,reps:"20"},
-      {name:"Thoracic rotation in quadruped",presc:"10 reps/side",sets:0}
-    ]},
-    { name:"Strength + golf block", dur:"50 min", ex:[
-      {name:"Cable rotations (golf pattern)",presc:"4×12/side, controlled speed",sets:4,reps:"12"},
-      {name:"Landmine rotations",presc:"3×10/side",sets:3,reps:"10"},
-      {name:"Dumbbell row (3-point stance)",presc:"4×10/side",sets:4,reps:"10"},
-      {name:"Rotational med ball slam",presc:"3×8/side",sets:3,reps:"8"},
-      {name:"Face pulls",presc:"3×15",sets:3,reps:"15"},
-      {name:"Rear delt fly",presc:"3×15",sets:3,reps:"15"},
-      {name:"Single-leg balance + rotation",presc:"3×10/side",sets:3,reps:"10"},
-      {name:"Wrist roller / forearm work",presc:"2 sets",sets:2,reps:"—"}
-    ]},
-    { name:"Cool-down", dur:"10 min", ex:[
-      {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
-      {name:"Cross-body posterior shoulder",presc:"60 sec/side",sets:0},
-      {name:"Overhead lat stretch",presc:"60 sec/side",sets:0},
-      {name:"Pigeon pose",presc:"90 sec/side",sets:0}
-    ]}
-  ]},
-  { day:"Saturday", label:"Long aerobic + full pliability", tag:"Base building", blocks:[
-    { name:"Cardio", dur:"30–45 min", ex:[
-      {name:"Option A — easy jog / run-walk",presc:"Zone 2, conversational. 3 min jog / 2 min walk if needed",sets:0},
-      {name:"Option B — assault bike / row erg",presc:"40 min Zone 2 steady state",sets:0}
-    ]},
-    { name:"Full pliability session", dur:"30 min", ex:[
-      {name:"Full body foam roll",presc:"5 min",sets:0},
-      {name:"Child's pose to cobra",presc:"5 reps",sets:0},
-      {name:"Pigeon pose",presc:"2 min/side",sets:0},
-      {name:"90/90 hip stretch",presc:"90 sec/side",sets:0},
-      {name:"Couch stretch",presc:"90 sec/side",sets:0},
-      {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
-      {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-      {name:"Supine hamstring with strap",presc:"90 sec/side",sets:0},
-      {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
-      {name:"Diaphragmatic breathing",presc:"5 min",sets:0}
-    ]}
-  ]},
-  { day:"Sunday", label:"Rest + pliability minimum", tag:"Recovery", blocks:[
-    { name:"Daily minimum", dur:"10 min", ex:[
-      {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
-      {name:"Hip 90/90",presc:"60 sec/side",sets:0},
-      {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-      {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
-      {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
-    ]}
-  ]}
-];
-
-const MEALS = [
-  {name:"Meal 1 — morning",time:"7–8 AM",items:[
-    {food:"Eggs (4–5 whole)",protein:30,carbs:2,fat:20},
-    {food:"Oats (½ cup dry)",protein:5,carbs:27,fat:3},
-    {food:"Banana",protein:1,carbs:27,fat:0},
-    {food:"Coffee",protein:0,carbs:0,fat:0}
-  ]},
-  {name:"Pre-training",time:"60–90 min before",items:[
-    {food:"Chicken breast (6 oz)",protein:42,carbs:0,fat:4},
-    {food:"White rice (1 cup cooked)",protein:4,carbs:45,fat:0},
-    {food:"Handful spinach",protein:1,carbs:1,fat:0}
-  ]},
-  {name:"Post-training",time:"Within 45 min",items:[
-    {food:"Whey protein shake (40g)",protein:40,carbs:4,fat:2},
-    {food:"Rice cakes (2) or banana",protein:1,carbs:25,fat:0}
-  ]},
-  {name:"Meal 3 — evening",time:"6–8 PM",items:[
-    {food:"Salmon or lean beef (7 oz)",protein:45,carbs:0,fat:18},
-    {food:"Sweet potato or broccoli",protein:3,carbs:30,fat:0},
-    {food:"Olive oil (1 tbsp)",protein:0,carbs:0,fat:14}
-  ]},
-  {name:"Before bed (optional)",time:"9–10 PM",items:[
-    {food:"Cottage cheese (1 cup) or casein shake",protein:30,carbs:6,fat:5}
-  ]}
-];
+// ── Storage key helpers ───────────────────────────────────
+const PID = ACTIVE_PLAN.id;
+function pk(k){return PID+':'+k}
 
 // ── Utilities ─────────────────────────────────────────────
 function today(){return new Date().toISOString().slice(0,10)}
@@ -457,7 +319,7 @@ async function buildWeekStrip(){
   const base=new Date(currentDate+'T12:00:00');
   const dow=base.getDay();
   const mon=new Date(base);mon.setDate(base.getDate()-(dow===0?6:dow-1));
-  const logs=await dbGet('tplogs')||[];
+  const logs=await dbGet(pk('tplogs'))||[];
   const loggedDates=new Set(logs.map(l=>l.date));
   strip.innerHTML='';
   ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach((name,i)=>{
@@ -473,27 +335,40 @@ async function buildWeekStrip(){
 
 // ── Today screen ──────────────────────────────────────────
 async function loadAndRenderToday(){
-  const saved=await dbGet('session-'+currentDate);
+  const saved=await dbGet(pk('session-'+currentDate));
   sessionData=saved||{};
   renderToday();
 }
 
 function renderToday(){
-  const plan=PLAN[getDayIdx(currentDate)];
+  const plan=ACTIVE_PLAN.days[getDayIdx(currentDate)];
   const d=new Date(currentDate+'T12:00:00');
   const dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const totalEx=plan.blocks.reduce((a,b)=>a+b.ex.length,0);
+  const dayIdx=getDayIdx(currentDate);
+  const isLift=[0,1,3,4].includes(dayIdx);
+  const isCardio=[2,5].includes(dayIdx);
+  const isMobility=dayIdx===6;
+
+  let shortcutBtn='';
+  if(isLift) shortcutBtn=`<button class="shortcut-btn" onclick="goTo('lift')">Open Lift tab to log strength →</button>`;
+  else if(isCardio) shortcutBtn=`<button class="shortcut-btn" onclick="goTo('cardio')">Open Cardio tab to log session →</button>`;
+  else if(isMobility) shortcutBtn=`<button class="shortcut-btn" onclick="goTo('mobility')">Open Mobility tab for daily checklist →</button>`;
 
   let html=`<div class="today-hero">
     <div class="today-date">${dateStr}</div>
     <div class="today-name">${plan.label}</div>
-    <div class="today-tag">${plan.tag}</div>
+    <div class="today-meta">
+      <div class="today-tag">${plan.tag}</div>
+      <a href="plan.html" class="phase-link">View full phase →</a>
+    </div>
   </div>
   <div class="session-stats">
     <div class="stat-box"><div class="stat-val">${plan.blocks.length}</div><div class="stat-lbl">Blocks</div></div>
     <div class="stat-box"><div class="stat-val">${totalEx}</div><div class="stat-lbl">Exercises</div></div>
     <div class="stat-box"><div class="stat-val" id="done-count">0</div><div class="stat-lbl">Done</div></div>
-  </div>`;
+  </div>
+  ${shortcutBtn}`;
 
   plan.blocks.forEach((block,bi)=>{
     html+=`<div class="block-section"><div class="block-header">${block.name} <span style="color:var(--text3);font-weight:400">· ${block.dur}</span></div>`;
@@ -580,20 +455,20 @@ function addSet(k,defReps){
   debounceSave();
 }
 function updateDoneCount(){
-  const plan=PLAN[getDayIdx(currentDate)];
+  const plan=ACTIVE_PLAN.days[getDayIdx(currentDate)];
   let done=0;
   plan.blocks.forEach((b,bi)=>b.ex.forEach((_,ei)=>{if(sessionData[`${currentDate}_${bi}_${ei}`]?.done)done++;}));
   const el=document.getElementById('done-count');if(el)el.textContent=done;
 }
 async function completeSession(){
-  const plan=PLAN[getDayIdx(currentDate)];
-  const logs=await dbGet('tplogs')||[];
+  const plan=ACTIVE_PLAN.days[getDayIdx(currentDate)];
+  const logs=await dbGet(pk('tplogs'))||[];
   const log={id:Date.now(),date:currentDate,day:plan.day,label:plan.label,completed:new Date().toISOString()};
   const idx=logs.findIndex(l=>l.date===currentDate);
   if(idx>=0)logs[idx]=log;else logs.unshift(log);
   setSyncState('syncing');
-  await dbSet('tplogs',logs);
-  await dbSet('session-'+currentDate,sessionData);
+  await dbSet(pk('tplogs'),logs);
+  await dbSet(pk('session-'+currentDate),sessionData);
   setSyncState('synced');
   buildWeekStrip();
   const btn=document.getElementById('complete-btn');
@@ -605,96 +480,217 @@ function debounceSave(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
     setSyncState('syncing');
-    await dbSet('session-'+currentDate,sessionData);
+    await dbSet(pk('session-'+currentDate),sessionData);
     setSyncState('synced');
   },1000);
 }
 
-// ── Progress screen ───────────────────────────────────────
-async function renderProgress(){
-  const logs=await dbGet('tplogs')||[];
-  const checkins=await dbGet('tpcheckins')||[];
-  const strength=await dbGet('tpstrength')||[];
-  const lastFat=checkins.length?checkins[0].fatigue:'—';
-  const avgSleep=checkins.length?(checkins.slice(0,4).reduce((a,c)=>a+parseFloat(c.sleep||0),0)/Math.min(checkins.length,4)).toFixed(1):'—';
-  document.getElementById('metric-cards').innerHTML=`
-    <div class="metric-card"><div class="metric-val" style="color:var(--accent)">${logs.length}</div><div class="metric-lbl">Sessions</div></div>
-    <div class="metric-card"><div class="metric-val">${strength.length}</div><div class="metric-lbl">Lifts logged</div></div>
-    <div class="metric-card"><div class="metric-val" style="color:${parseInt(lastFat)>=7?'var(--red)':'var(--text)'}">${lastFat}</div><div class="metric-lbl">Last fatigue</div></div>
-    <div class="metric-card"><div class="metric-val" style="color:var(--blue)">${avgSleep}</div><div class="metric-lbl">Avg sleep</div></div>`;
+// ── Lift screen ───────────────────────────────────────────
+const TRACKED_LIFTS=['Trap bar deadlift','Romanian deadlift','Incline dumbbell press','Pull-ups (weighted)','Bulgarian split squat'];
+
+function epley1RM(weight,reps){
+  const w=parseFloat(weight),r=parseInt(reps);
+  if(!w||isNaN(r)||r<=1)return w||0;
+  return Math.round(w*(1+r/30));
+}
+
+function sparklineSVG(entries){
+  if(entries.length<2)return `<svg width="80" height="28"></svg>`;
+  const weights=entries.map(e=>parseFloat(e.weight));
+  const min=Math.min(...weights),max=Math.max(...weights);
+  const range=max-min||1;
+  const W=80,H=28,pad=4;
+  const pts=weights.map((v,i)=>{
+    const x=pad+(i/(weights.length-1))*(W-2*pad);
+    const y=H-pad-((v-min)/range)*(H-2*pad);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return `<svg width="${W}" height="${H}" style="overflow:visible"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+
+async function renderLift(){
+  const strength=await dbGet(pk('tpstrength'))||[];
   const bests={};
-  strength.forEach(e=>{if(!bests[e.exercise]||parseFloat(e.weight)>parseFloat(bests[e.exercise]))bests[e.exercise]=parseFloat(e.weight)});
+  strength.forEach(e=>{if(!bests[e.exercise]||parseFloat(e.weight)>parseFloat(bests[e.exercise].weight))bests[e.exercise]=e});
+
+  // Dashboard cards
+  let dashHtml='';
+  TRACKED_LIFTS.forEach(name=>{
+    const entries=strength.filter(e=>e.exercise===name).slice(0,8).reverse();
+    const best=bests[name];
+    const pr=best?`${best.weight} lbs`:'—';
+    const repsNum=best?parseInt((best.sets||'').split('x')[1])||1:1;
+    const orm=best?epley1RM(best.weight,repsNum):0;
+    const lastDate=best?best.date:'—';
+    dashHtml+=`<div class="lift-card">
+      <div class="lift-card-top">
+        <div>
+          <div class="lift-card-name">${name}</div>
+          <div class="lift-card-meta">Last: ${lastDate}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="lift-card-pr">${pr}</div>
+          ${orm?`<div class="lift-1rm">~${orm} lbs <span>est. 1RM</span></div>`:''}
+        </div>
+      </div>
+      <div class="lift-card-bottom">
+        ${sparklineSVG(entries)}
+        <span style="font-size:11px;color:var(--text3)">${entries.length} sessions</span>
+      </div>
+    </div>`;
+  });
+  document.getElementById('lift-dashboard').innerHTML=
+    `<div class="section-head" style="margin-top:16px">Key lifts</div><div class="lift-cards">${dashHtml}</div>`;
+
+  // History grouped by exercise (accordion)
+  const byEx={};
+  strength.forEach(e=>{if(!byEx[e.exercise])byEx[e.exercise]=[];byEx[e.exercise].push(e)});
+  const exBests={};
+  strength.forEach(e=>{if(!exBests[e.exercise]||parseFloat(e.weight)>parseFloat(exBests[e.exercise]))exBests[e.exercise]=parseFloat(e.weight)});
   const strEl=document.getElementById('strength-list');
   if(!strength.length){strEl.innerHTML='<div class="empty-state">No lifts logged yet</div>'}
-  else{strEl.innerHTML=`<div class="ci-card" style="padding:0 14px">`+strength.map(e=>`
-    <div class="str-row">
-      <span>${e.exercise}${parseFloat(e.weight)>=bests[e.exercise]?'<span class="pr-badge">PR</span>':''}</span>
-      <span style="font-family:'DM Mono',monospace;font-size:13px">${e.weight} lbs</span>
-      <span style="color:var(--text3);font-size:12px">${e.sets}</span>
-      <button class="del-btn" onclick="deleteStrength(${e.id})">✕</button>
-    </div>`).join('')+`</div>`}
-  const histEl=document.getElementById('session-history');
-  if(!logs.length){histEl.innerHTML='<div class="empty-state">No sessions logged yet</div>'}
-  else{histEl.innerHTML=logs.slice(0,20).map(l=>`
-    <div class="log-card">
-      <div class="log-card-top"><span class="log-card-day">${l.label||l.day}</span><span class="log-card-date">${l.date}</span></div>
-      <div style="font-size:12px;color:var(--text3)">${l.day}</div>
-    </div>`).join('')}
+  else{
+    strEl.innerHTML=Object.entries(byEx).map(([name,entries])=>`
+      <div class="accordion-item" id="acc-${name.replace(/\s/g,'_')}">
+        <div class="accordion-header" onclick="toggleAccordion('acc-${name.replace(/\s/g,'_')}')">
+          <div><div class="accordion-title">${name}</div><div class="accordion-sub">${entries.length} entries · PR ${exBests[name]} lbs</div></div>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body" id="body-${name.replace(/\s/g,'_')}">
+          ${entries.map(e=>`<div class="str-row">
+            <span>${e.weight} lbs${parseFloat(e.weight)>=exBests[name]?'<span class="pr-badge">PR</span>':''}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text3)">${e.sets}</span>
+            <span style="color:var(--text3);font-size:12px">${e.date}</span>
+            <button class="del-btn" onclick="deleteStrength(${e.id})">✕</button>
+          </div>`).join('')}
+        </div>
+      </div>`).join('')
+  }
   document.getElementById('str-date').value=today();
 }
+
+function toggleAccordion(id){
+  const item=document.getElementById(id);
+  const body=item.querySelector('.accordion-body');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  item.classList.toggle('open',!isOpen);
+}
+
 async function saveStrength(){
   const w=document.getElementById('str-weight').value;
   if(!w){showToast('Enter a weight');return}
   const e={id:Date.now(),exercise:document.getElementById('str-ex').value,weight:w,sets:document.getElementById('str-sets').value,date:document.getElementById('str-date').value||today()};
-  const data=await dbGet('tpstrength')||[];data.unshift(e);
-  setSyncState('syncing');await dbSet('tpstrength',data);setSyncState('synced');
+  const data=await dbGet(pk('tpstrength'))||[];data.unshift(e);
+  setSyncState('syncing');await dbSet(pk('tpstrength'),data);setSyncState('synced');
   document.getElementById('str-weight').value='';document.getElementById('str-sets').value='';
-  showToast('Lift saved!');renderProgress();
+  showToast('Lift saved!');renderLift();
 }
 async function deleteStrength(id){
-  let data=await dbGet('tpstrength')||[];data=data.filter(e=>e.id!==id);
-  await dbSet('tpstrength',data);renderProgress();
+  let data=await dbGet(pk('tpstrength'))||[];data=data.filter(e=>e.id!==id);
+  await dbSet(pk('tpstrength'),data);renderLift();
 }
 
-// ── Meals screen ──────────────────────────────────────────
-function renderMeals(){
-  let html='';
-  MEALS.forEach(meal=>{
-    const totP=meal.items.reduce((a,i)=>a+i.protein,0);
-    const totC=meal.items.reduce((a,i)=>a+i.carbs,0);
-    const totF=meal.items.reduce((a,i)=>a+i.fat,0);
-    html+=`<div class="meal-card">
-      <div class="meal-card-header"><span class="meal-title">${meal.name}</span><span class="meal-time">${meal.time}</span></div>
-      ${meal.items.map(i=>`<div class="meal-item-row"><span>${i.food}</span><span class="meal-item-macros">${i.protein}P · ${i.carbs}C · ${i.fat}F</span></div>`).join('')}
-      <div style="display:flex;gap:12px;margin-top:10px;padding-top:8px;border-top:0.5px solid var(--border);font-size:12px">
-        <span style="color:var(--accent)">${totP}g protein</span>
-        <span style="color:var(--blue)">${totC}g carbs</span>
-        <span style="color:var(--amber)">${totF}g fat</span>
-      </div></div>`;
+// ── Cardio screen ─────────────────────────────────────────
+async function renderCardio(){
+  const data=await dbGet(pk('tpcardio'))||[];
+  const total=data.length;
+  const avgDur=total?(data.reduce((a,c)=>a+parseFloat(c.duration||0),0)/total).toFixed(0):'—';
+  document.getElementById('cardio-metrics').innerHTML=`
+    <div class="metric-card"><div class="metric-val" style="color:var(--blue)">${total}</div><div class="metric-lbl">Sessions</div></div>
+    <div class="metric-card"><div class="metric-val">${avgDur}</div><div class="metric-lbl">Avg min</div></div>`;
+  const listEl=document.getElementById('cardio-list');
+  if(!data.length){listEl.innerHTML='<div class="empty-state">No cardio logged yet</div>'}
+  else{listEl.innerHTML=data.map(c=>`
+    <div class="log-card">
+      <div class="log-card-top">
+        <span class="log-card-day">${c.type}</span>
+        <span class="log-card-date">${c.date}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;color:var(--text3)">${c.duration} min${c.notes?` · ${c.notes}`:''}</div>
+        <button class="del-btn" onclick="deleteCardio(${c.id})">✕</button>
+      </div>
+    </div>`).join('')}
+  document.getElementById('cardio-date').value=today();
+}
+async function saveCardio(){
+  const dur=document.getElementById('cardio-dur').value;
+  if(!dur){showToast('Enter duration');return}
+  const e={id:Date.now(),type:document.getElementById('cardio-type').value,duration:dur,notes:document.getElementById('cardio-notes').value,date:document.getElementById('cardio-date').value||today()};
+  const data=await dbGet(pk('tpcardio'))||[];data.unshift(e);
+  setSyncState('syncing');await dbSet(pk('tpcardio'),data);setSyncState('synced');
+  document.getElementById('cardio-dur').value='';document.getElementById('cardio-notes').value='';
+  showToast('Session saved!');renderCardio();
+}
+async function deleteCardio(id){
+  let data=await dbGet(pk('tpcardio'))||[];data=data.filter(c=>c.id!==id);
+  await dbSet(pk('tpcardio'),data);renderCardio();
+}
+
+// ── Mobility screen ───────────────────────────────────────
+async function renderMobility(){
+  const mobKey=pk('mobility-'+today());
+  const checked=await dbGet(mobKey)||[];
+  const checkedSet=new Set(checked);
+  const dailyMin=ACTIVE_PLAN.days[6].blocks[0]; // Sunday daily minimum
+  const dayPlan=ACTIVE_PLAN.days[getDayIdx(today())];
+  const warmup=dayPlan.blocks.find(b=>b.name.toLowerCase().includes('warm'));
+  const cooldown=dayPlan.blocks.find(b=>b.name.toLowerCase().includes('cool'));
+
+  let html=`<div class="section-head" style="margin-top:16px">Daily minimum</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:12px">${dailyMin.dur} · every day</div>`;
+  dailyMin.ex.forEach((ex,i)=>{
+    const key=`min-${i}`;
+    const isChecked=checkedSet.has(key);
+    html+=`<div class="mob-check-item${isChecked?' checked':''}" onclick="toggleMobility('${key}','${mobKey}')">
+      <div class="mob-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+      <div><div class="mob-item-name">${ex.name}</div><div class="mob-item-presc">${ex.presc}</div></div>
+    </div>`;
   });
-  html+=`<div class="meal-card">
-    <div class="meal-card-header"><span class="meal-title">Supplements</span><span class="meal-time">Daily</span></div>
-    <div class="meal-item-row"><span>Creatine monohydrate</span><span class="meal-item-macros">5g · any meal</span></div>
-    <div class="meal-item-row"><span>Whey protein</span><span class="meal-item-macros">as needed · post-workout</span></div>
-    <div class="meal-item-row"><span>Omega-3 fish oil</span><span class="meal-item-macros">3g EPA+DHA · with meal</span></div>
-    <div class="meal-item-row"><span>Vitamin D3</span><span class="meal-item-macros">3,000 IU · with fat meal</span></div>
-    <div class="meal-item-row"><span>Magnesium glycinate</span><span class="meal-item-macros">300mg · before bed</span></div>
-    <div class="meal-item-row"><span>Collagen + Vit C</span><span class="meal-item-macros">15g + 50mg · pre-workout</span></div>
-  </div>`;
-  document.getElementById('meal-plan-content').innerHTML=html;
+
+  if(warmup){
+    html+=`<div class="section-head">${warmup.name}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">${warmup.dur}</div>`;
+    warmup.ex.forEach(ex=>{
+      html+=`<div class="mob-check-item" style="cursor:default">
+        <div class="mob-checkbox" style="opacity:.4"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+        <div><div class="mob-item-name">${ex.name}</div><div class="mob-item-presc">${ex.presc}</div></div>
+      </div>`;
+    });
+  }
+  if(cooldown){
+    html+=`<div class="section-head">${cooldown.name}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">${cooldown.dur}</div>`;
+    cooldown.ex.forEach(ex=>{
+      html+=`<div class="mob-check-item" style="cursor:default">
+        <div class="mob-checkbox" style="opacity:.4"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+        <div><div class="mob-item-name">${ex.name}</div><div class="mob-item-presc">${ex.presc}</div></div>
+      </div>`;
+    });
+  }
+  document.getElementById('mobility-content').innerHTML=html;
+}
+
+async function toggleMobility(key,mobKey){
+  const checked=await dbGet(mobKey)||[];
+  const s=new Set(checked);
+  if(s.has(key))s.delete(key);else s.add(key);
+  await dbSet(mobKey,[...s]);
+  renderMobility();
 }
 
 // ── Check-in screen ───────────────────────────────────────
 function sv(id,vid){document.getElementById(vid).textContent=document.getElementById(id).value}
 async function saveCheckin(){
   const e={id:Date.now(),date:document.getElementById('ci-date').value||today(),sessions:document.getElementById('ci-sessions').value,fatigue:document.getElementById('ci-fatigue').value,ql:document.getElementById('ci-ql').value,sleep:document.getElementById('ci-sleep').value,stress:document.getElementById('ci-stress').value,prs:document.getElementById('ci-prs').value,pliability:document.getElementById('ci-pliability').value,nutrition:document.getElementById('ci-nutrition').value,notes:document.getElementById('ci-notes').value};
-  const data=await dbGet('tpcheckins')||[];data.unshift(e);
-  setSyncState('syncing');await dbSet('tpcheckins',data);setSyncState('synced');
+  const data=await dbGet(pk('tpcheckins'))||[];data.unshift(e);
+  setSyncState('syncing');await dbSet(pk('tpcheckins'),data);setSyncState('synced');
   document.getElementById('ci-prs').value='';document.getElementById('ci-notes').value='';
   showToast('Check-in saved!');renderCheckins();
 }
 async function renderCheckins(){
-  const data=await dbGet('tpcheckins')||[];
+  const data=await dbGet(pk('tpcheckins'))||[];
   const el=document.getElementById('checkin-history');
   if(!data.length){el.innerHTML='<div class="empty-state">No check-ins yet</div>';return}
   el.innerHTML=data.map(c=>`<div class="ci-entry">
@@ -712,8 +708,8 @@ async function renderCheckins(){
   </div>`).join('');
 }
 async function deleteCheckin(id){
-  let data=await dbGet('tpcheckins')||[];data=data.filter(c=>c.id!==id);
-  await dbSet('tpcheckins',data);renderCheckins();
+  let data=await dbGet(pk('tpcheckins'))||[];data=data.filter(c=>c.id!==id);
+  await dbSet(pk('tpcheckins'),data);renderCheckins();
 }
 
 // ── Nav ───────────────────────────────────────────────────
@@ -723,13 +719,15 @@ function goTo(screen){
   document.getElementById('screen-'+screen).classList.add('active');
   document.getElementById('nav-'+screen).classList.add('active');
   document.getElementById('main-content').scrollTop=0;
-  if(screen==='progress')renderProgress();
-  if(screen==='meals')renderMeals();
-  if(screen==='checkin'){document.getElementById('ci-date').value=today();renderCheckins();}
+  if(screen==='lift')renderLift();
+  if(screen==='cardio')renderCardio();
+  if(screen==='mobility')renderMobility();
+  if(screen==='log'){document.getElementById('ci-date').value=today();renderCheckins();}
 }
 
 // ── Init ──────────────────────────────────────────────────
 async function init(){
+  document.getElementById('app-title').textContent=ACTIVE_PLAN.name.toUpperCase()+' · WKS 1–'+ACTIVE_PLAN.weeks;
   document.getElementById('ci-date').value=today();
   await buildWeekStrip();
   await loadAndRenderToday();
