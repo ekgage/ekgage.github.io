@@ -1,5 +1,4 @@
-# Phase 1 Fitness Tracker
-
+# Fitness Tracker
 A mobile-first workout tracking app hosted on GitHub Pages.
 
 ## Features
