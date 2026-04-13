@@ -277,6 +277,7 @@ textarea{height:72px;resize:vertical}
           <button class="btn-primary" onclick="saveCheckin()">Save check-in</button>
         </div>
         <div id="checkin-history"></div>
+        <button class="shortcut-btn" style="margin-top:16px" onclick="copyForTrainer()">Copy training summary for AI trainer</button>
       </div>
     </div>
   </div>
@@ -840,6 +841,76 @@ async function renderCheckins(){
 async function deleteCheckin(id){
   let data=await dbGet(pk('tpcheckins'))||[];data=data.filter(c=>c.id!==id);
   await dbSet(pk('tpcheckins'),data);renderCheckins();
+}
+
+// ── Copy for trainer ─────────────────────────────────────
+function copyForTrainer(){
+  const phases=['phase1','phase2','phase3'];
+  const t=today();
+  const phase=getPlanForDate(t);
+  const startD=new Date(phase.startDate+'T12:00:00');
+  const nowD=new Date(t+'T12:00:00');
+  const wk=t<phase.startDate?1:Math.min(Math.floor((nowD-startD)/(7*864e5))+1,phase.weeks);
+
+  let allLogs=[],allStrength=[],allCardio=[],allCheckins=[];
+  for(const pid of phases){
+    (lsGet(pid+':tplogs')||[]).forEach(l=>allLogs.push(l));
+    (lsGet(pid+':tpstrength')||[]).forEach(l=>allStrength.push(l));
+    (lsGet(pid+':tpcardio')||[]).forEach(l=>allCardio.push(l));
+    (lsGet(pid+':tpcheckins')||[]).forEach(l=>allCheckins.push(l));
+  }
+  allLogs.sort((a,b)=>b.date.localeCompare(a.date));
+  allStrength.sort((a,b)=>b.date.localeCompare(a.date));
+  allCardio.sort((a,b)=>b.date.localeCompare(a.date));
+  allCheckins.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const prs={};
+  allStrength.forEach(e=>{if(!prs[e.exercise]||parseFloat(e.weight)>parseFloat(prs[e.exercise].weight))prs[e.exercise]=e;});
+
+  const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+
+  let md=`# Training Summary — ${fmtDate(t)}\n`;
+  md+=`**Active phase:** ${phase.name} (Week ${wk} of ${phase.weeks}, starts ${phase.startDate})\n\n`;
+
+  md+=`## Sessions completed\n`;
+  if(!allLogs.length){md+='No sessions logged yet.\n';}
+  else{allLogs.slice(0,20).forEach(l=>{md+=`- ${fmtDate(l.date)}: ${l.label}\n`;});}
+  md+='\n';
+
+  md+=`## Lift PRs (best weight logged)\n`;
+  const prEntries=Object.values(prs);
+  if(!prEntries.length){md+='No lifts logged yet.\n';}
+  else{
+    md+='| Exercise | Weight | Sets | Date |\n|---|---|---|---|\n';
+    prEntries.forEach(e=>{md+=`| ${e.exercise} | ${e.weight} lbs | ${e.sets||'—'} | ${e.date} |\n`;});
+  }
+  md+='\n';
+
+  md+=`## Cardio sessions\n`;
+  if(!allCardio.length){md+='No cardio logged yet.\n';}
+  else{allCardio.slice(0,10).forEach(c=>{md+=`- ${c.date}: ${c.type} — ${c.duration} min${c.notes?'. "'+c.notes+'"':''}\n`;});}
+  md+='\n';
+
+  if(allCheckins.length){
+    const ci=allCheckins[0];
+    md+=`## Latest weekly check-in (week ending ${ci.date})\n`;
+    md+=`- Sessions done: ${ci.sessions}/7 | Fatigue: ${ci.fatigue}/10 | QL pain: ${ci.ql}/10\n`;
+    md+=`- Sleep: ${ci.sleep}h | Stress: ${ci.stress}/10 | Pliability: ${ci.pliability} | Nutrition: ${ci.nutrition}\n`;
+    if(ci.prs)md+=`- PRs: ${ci.prs}\n`;
+    if(ci.notes)md+=`- Notes: ${ci.notes}\n`;
+    md+='\n';
+  }
+
+  md+=`## Full phase schedule\n`;
+  PLANS.forEach(p=>{
+    const end=_addDays(p.startDate,p.weeks*7-1);
+    md+=`- ${p.name}: ${p.startDate} – ${end}\n`;
+    p.weekNotes.forEach((n,i)=>{md+=`  - Wk ${i+1}: ${n.replace(/^Week \d+ — /,'')}\n`;});
+  });
+
+  navigator.clipboard.writeText(md)
+    .then(()=>showToast('Copied for trainer!'))
+    .catch(()=>showToast('Copy failed'));
 }
 
 // ── Nav ───────────────────────────────────────────────────
