@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercise Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0e;--bg2:#181817;--bg3:#222220;--bg4:#2a2a28;
+  --border:#ffffff14;--border2:#ffffff22;
+  --text:#f0eeea;--text2:#9f9f9b;--text3:#6b6b67;
+  --accent:#c8f060;--accent-bg:#c8f06012;
+  --red:#f87171;--amber:#fbbf24;--blue:#60a5fa;
+  --r:10px;--r2:14px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:480px;margin:0 auto;padding:0 16px 40px}
+.topbar{padding:16px 0 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);margin-bottom:20px}
+.topbar-title{font-family:'DM Mono',monospace;font-size:13px;color:var(--text3);letter-spacing:.08em}
+.back-link{font-size:12px;color:var(--text3);text-decoration:none;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border2);letter-spacing:.04em;transition:color .15s}
+.back-link:active{color:var(--accent)}
+.search-bar{position:relative;margin-bottom:16px}
+.search-bar input{width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 14px 10px 38px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar input::placeholder{color:var(--text3)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:1.5;pointer-events:none}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-chip{font-size:11px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.filter-chip.active{background:var(--accent);border-color:var(--accent);color:#0f0f0e;font-weight:600}
+.section-head{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin:24px 0 10px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);margin-bottom:8px;overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;gap:8px;-webkit-tap-highlight-color:transparent}
+.card-title{font-size:14px;font-weight:500}
+.card-meta{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.cat-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;white-space:nowrap}
+.cat-Strength{background:#c8f06018;color:var(--accent)}
+.cat-Power{background:#f8717118;color:var(--red)}
+.cat-Cardio{background:#60a5fa18;color:var(--blue)}
+.cat-Core{background:#fbbf2418;color:var(--amber)}
+.cat-Warm-up{background:#9f9f9b18;color:var(--text2)}
+.cat-Cool-down{background:#9f9f9b18;color:var(--text2)}
+.card-arrow{font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.card.open .card-arrow{transform:rotate(180deg)}
+.card-body{display:none;padding:0 14px 14px;border-top:0.5px solid var(--border)}
+.card.open .card-body{display:block}
+.muscles{font-size:12px;color:var(--accent);margin:10px 0 6px;font-weight:500}
+.description{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px}
+.cues-head{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.cue-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.cue-list li{font-size:13px;color:var(--text);padding-left:14px;position:relative}
+.cue-list li::before{content:"→";position:absolute;left:0;color:var(--accent);font-size:11px;top:2px}
+.days-head{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px}
+.day-tags{display:flex;flex-wrap:wrap;gap:5px}
+.day-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg3);color:var(--text3)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+.count-label{font-size:12px;color:var(--text3);margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="topbar-title">EXERCISE GLOSSARY</span>
+    <a href="index.html" class="back-link">← Tracker</a>
+  </div>
+
+  <div class="search-bar">
+    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="search" placeholder="Search exercises..." oninput="renderGlossary()" autocomplete="off">
+  </div>
+
+  <div class="filter-row" id="filter-row"></div>
+  <div class="count-label" id="count-label"></div>
+  <div id="glossary-content"></div>
+</div>
+
+<script src="full-plan.js"></script>
+<script src="glossary-data.js"></script>
+<script>
+// ── Build exercise→days index from plan data ──────────────
+const exDays = {};
+PLANS.forEach(plan => {
+  plan.days.forEach(day => {
+    day.blocks.forEach(block => {
+      block.ex.forEach(ex => {
+        if (!exDays[ex.name]) exDays[ex.name] = new Set();
+        exDays[ex.name].add(day.label);
+      });
+    });
+  });
+});
+
+// ── Collect all unique exercises ──────────────────────────
+const ALL_CATEGORIES = ['Strength', 'Power', 'Cardio', 'Core', 'Warm-up', 'Cool-down'];
+let activeCategory = 'All';
+
+// Build set of all exercise names from plan (fallback for exercises not in GLOSSARY_DATA)
+const allExerciseNames = new Set();
+PLANS.forEach(plan => {
+  plan.days.forEach(day => {
+    day.blocks.forEach(block => {
+      block.ex.forEach(ex => allExerciseNames.add(ex.name));
+    });
+  });
+});
+
+// Merge plan exercises with glossary data; exercises not in glossary get a minimal entry
+const allEntries = {};
+allExerciseNames.forEach(name => {
+  if (GLOSSARY_DATA[name]) {
+    allEntries[name] = GLOSSARY_DATA[name];
+  } else {
+    // Find the first occurrence to get a presc fallback
+    let presc = '';
+    PLANS.forEach(plan => {
+      plan.days.forEach(day => {
+        day.blocks.forEach(block => {
+          block.ex.forEach(ex => {
+            if (ex.name === name && !presc) presc = ex.presc || '';
+          });
+        });
+      });
+    });
+    allEntries[name] = {
+      category: 'Warm-up',
+      muscles: '',
+      description: presc,
+      cues: []
+    };
+  }
+});
+
+// ── Filter chips ──────────────────────────────────────────
+function buildFilters() {
+  const row = document.getElementById('filter-row');
+  const chips = ['All', ...ALL_CATEGORIES];
+  row.innerHTML = chips.map(c =>
+    `<button class="filter-chip${c === activeCategory ? ' active' : ''}" onclick="setCategory('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  buildFilters();
+  renderGlossary();
+}
+
+// ── Render ────────────────────────────────────────────────
+function renderGlossary() {
+  const query = (document.getElementById('search').value || '').toLowerCase().trim();
+  const container = document.getElementById('glossary-content');
+
+  // Filter entries
+  const filtered = Object.entries(allEntries).filter(([name, data]) => {
+    const matchesCat = activeCategory === 'All' || data.category === activeCategory;
+    const matchesQuery = !query ||
+      name.toLowerCase().includes(query) ||
+      (data.muscles || '').toLowerCase().includes(query) ||
+      (data.description || '').toLowerCase().includes(query);
+    return matchesCat && matchesQuery;
+  });
+
+  document.getElementById('count-label').textContent =
+    `${filtered.length} exercise${filtered.length !== 1 ? 's' : ''}`;
+
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty-state">No exercises match your search</div>';
+    return;
+  }
+
+  // Group by category
+  const grouped = {};
+  filtered.forEach(([name, data]) => {
+    const cat = data.category || 'Other';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push([name, data]);
+  });
+
+  // Sort groups by canonical order, then alphabetically within
+  const catOrder = ['Strength', 'Power', 'Cardio', 'Core', 'Warm-up', 'Cool-down', 'Other'];
+  const sortedGroups = catOrder
+    .filter(c => grouped[c])
+    .map(c => [c, grouped[c].sort((a, b) => a[0].localeCompare(b[0]))]);
+
+  let html = '';
+  sortedGroups.forEach(([cat, entries]) => {
+    html += `<div class="section-head">${cat}</div>`;
+    entries.forEach(([name, data]) => {
+      const safeId = name.replace(/[^a-zA-Z0-9]/g, '_');
+      const days = exDays[name] ? [...exDays[name]] : [];
+      html += `<div class="card" id="card_${safeId}">
+        <div class="card-header" onclick="toggleCard('card_${safeId}')">
+          <div class="card-title">${name}</div>
+          <div class="card-meta">
+            <span class="cat-badge cat-${data.category}">${data.category}</span>
+            <span class="card-arrow">▾</span>
+          </div>
+        </div>
+        <div class="card-body">
+          ${data.muscles ? `<div class="muscles">${data.muscles}</div>` : ''}
+          ${data.description ? `<div class="description">${data.description}</div>` : ''}
+          ${data.cues && data.cues.length ? `
+            <div class="cues-head">Coaching cues</div>
+            <ul class="cue-list">${data.cues.map(c => `<li>${c}</li>`).join('')}</ul>
+          ` : ''}
+          ${days.length ? `
+            <div class="days-head">Appears in</div>
+            <div class="day-tags">${days.map(d => `<span class="day-tag">${d}</span>`).join('')}</div>
+          ` : ''}
+        </div>
+      </div>`;
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+// ── Init ──────────────────────────────────────────────────
+buildFilters();
+renderGlossary();
+</script>
+</body>
+</html>

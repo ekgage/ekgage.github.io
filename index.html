@@ -175,6 +175,7 @@ textarea{height:72px;resize:vertical}
       <span class="app-title" id="app-title">PHASE 1 · WKS 1–4</span>
       <div style="display:flex;align-items:center;gap:10px">
         <a href="plan.html" style="font-size:11px;color:var(--text3);text-decoration:none;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border2);letter-spacing:.04em;-webkit-tap-highlight-color:transparent">Full plan</a>
+        <a href="glossary.html" style="font-size:11px;color:var(--text3);text-decoration:none;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border2);letter-spacing:.04em;-webkit-tap-highlight-color:transparent">Glossary</a>
         <div style="display:flex;align-items:center;gap:6px">
           <span style="font-size:11px;color:var(--text3)" id="sync-label">ready</span>
           <div class="sync-dot" id="sync-dot"></div>
@@ -253,20 +254,20 @@ textarea{height:72px;resize:vertical}
       <div style="padding-top:16px" id="mobility-content"></div>
     </div>
 
-    <!-- LOG (check-in) -->
+    <!-- LOG (daily) -->
     <div class="screen" id="screen-log">
       <div style="padding-top:16px">
         <div class="ci-card">
-          <div style="font-size:15px;font-weight:500;margin-bottom:14px">Weekly check-in</div>
-          <div style="margin-bottom:10px"><label>Week ending</label><input type="date" id="ci-date"></div>
+          <div style="font-size:15px;font-weight:500;margin-bottom:14px">Daily log</div>
+          <div style="margin-bottom:10px"><label>Date</label><input type="date" id="ci-date"></div>
+          <div id="ci-day-label" style="font-size:12px;color:var(--accent);margin-bottom:14px;font-weight:500"></div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Training</div>
-          <div class="slider-row"><span>Sessions done</span><input type="range" min="0" max="7" step="1" value="4" id="ci-sessions" oninput="sv('ci-sessions','ci-sv1')"><span class="slider-val" id="ci-sv1">4</span></div>
           <div class="slider-row"><span>Fatigue</span><input type="range" min="1" max="10" value="5" id="ci-fatigue" oninput="sv('ci-fatigue','ci-sv2')"><span class="slider-val" id="ci-sv2">5</span></div>
           <div style="margin-bottom:10px"><label>PRs / improvements</label><input type="text" id="ci-prs" placeholder="e.g. RDLs +10 lbs, sprints smoother"></div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;margin-top:16px">QL / Back</div>
           <div class="slider-row"><span>Pain level (0=none)</span><input type="range" min="0" max="10" value="3" id="ci-ql" oninput="sv('ci-ql','ci-sv3')"><span class="slider-val" id="ci-sv3">3</span></div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;margin-top:16px">Recovery</div>
-          <div class="slider-row"><span>Avg sleep (hrs)</span><input type="range" min="4" max="10" step="0.5" value="7" id="ci-sleep" oninput="sv('ci-sleep','ci-sv4')"><span class="slider-val" id="ci-sv4">7</span></div>
+          <div class="slider-row"><span>Sleep (hrs)</span><input type="range" min="4" max="10" step="0.5" value="7" id="ci-sleep" oninput="sv('ci-sleep','ci-sv4')"><span class="slider-val" id="ci-sv4">7</span></div>
           <div class="slider-row"><span>Stress</span><input type="range" min="1" max="10" value="5" id="ci-stress" oninput="sv('ci-stress','ci-sv5')"><span class="slider-val" id="ci-sv5">5</span></div>
           <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;margin-top:16px">Pliability + Nutrition</div>
           <div class="form-row">
@@ -274,7 +275,7 @@ textarea{height:72px;resize:vertical}
             <div><label>Nutrition</label><select id="ci-nutrition"><option>On target</option><option>Hit protein only</option><option>Inconsistent</option><option>Off track</option></select></div>
           </div>
           <div class="form-row full"><div><label>Notes</label><textarea id="ci-notes" placeholder="Golf, energy, movement quality, anything notable..."></textarea></div></div>
-          <button class="btn-primary" onclick="saveCheckin()">Save check-in</button>
+          <button class="btn-primary" onclick="saveDailyLog()">Save log</button>
         </div>
         <div id="checkin-history"></div>
         <button class="shortcut-btn" style="margin-top:16px" onclick="copyForTrainer()">Copy training summary for AI trainer</button>
@@ -598,12 +599,37 @@ async function completeSession(){
   setSyncState('syncing');
   await dbSet(dayPid+':tplogs',logs);
   await dbSet(dayPid+':session-'+currentDate,sessionData);
+
+  // Auto-import weighted exercises into tpstrength
+  const newLifts=[];
+  plan.blocks.forEach((block,bi)=>{
+    block.ex.forEach((ex,ei)=>{
+      if(ex.sets>0){
+        const key=`${currentDate}_${bi}_${ei}`;
+        const s=sessionData[key];
+        if(s&&s.sets){
+          const weightedSets=s.sets.filter(st=>st.weight&&parseFloat(st.weight)>0);
+          if(weightedSets.length){
+            const best=weightedSets.reduce((a,b)=>parseFloat(b.weight)>parseFloat(a.weight)?b:a);
+            const setsStr=`${weightedSets.length}x${best.reps||ex.reps||'?'}`;
+            newLifts.push({id:Date.now()+bi*1000+ei,exercise:ex.name,weight:best.weight,sets:setsStr,date:currentDate});
+          }
+        }
+      }
+    });
+  });
+  if(newLifts.length){
+    const existing=await dbGet(dayPid+':tpstrength')||[];
+    const deduped=existing.filter(e=>e.date!==currentDate);
+    await dbSet(dayPid+':tpstrength',[...newLifts,...deduped]);
+  }
+
   setSyncState('synced');
   buildWeekStrip();
   updateProgressBar();
   const btn=document.getElementById('complete-btn');
   if(btn){btn.textContent='✓ Session saved';btn.classList.add('done-state')}
-  showToast('Session saved!');
+  showToast(newLifts.length?`Session saved! ${newLifts.length} lift${newLifts.length>1?'s':''} imported.`:'Session saved!');
 }
 let saveTimer;
 function debounceSave(){
@@ -783,9 +809,11 @@ async function renderMobility(){
   if(warmup){
     html+=`<div class="section-head">${warmup.name}</div>
       <div style="font-size:12px;color:var(--text3);margin-bottom:12px">${warmup.dur}</div>`;
-    warmup.ex.forEach(ex=>{
-      html+=`<div class="mob-check-item" style="cursor:default">
-        <div class="mob-checkbox" style="opacity:.4"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+    warmup.ex.forEach((ex,i)=>{
+      const key=`wu-${i}`;
+      const isChecked=checkedSet.has(key);
+      html+=`<div class="mob-check-item${isChecked?' checked':''}" onclick="toggleMobility('${key}','${mobKey}')">
+        <div class="mob-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
         <div><div class="mob-item-name">${ex.name}</div><div class="mob-item-presc">${ex.presc}</div></div>
       </div>`;
     });
@@ -793,9 +821,11 @@ async function renderMobility(){
   if(cooldown){
     html+=`<div class="section-head">${cooldown.name}</div>
       <div style="font-size:12px;color:var(--text3);margin-bottom:12px">${cooldown.dur}</div>`;
-    cooldown.ex.forEach(ex=>{
-      html+=`<div class="mob-check-item" style="cursor:default">
-        <div class="mob-checkbox" style="opacity:.4"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
+    cooldown.ex.forEach((ex,i)=>{
+      const key=`cd-${i}`;
+      const isChecked=checkedSet.has(key);
+      html+=`<div class="mob-check-item${isChecked?' checked':''}" onclick="toggleMobility('${key}','${mobKey}')">
+        <div class="mob-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg></div>
         <div><div class="mob-item-name">${ex.name}</div><div class="mob-item-presc">${ex.presc}</div></div>
       </div>`;
     });
@@ -811,23 +841,31 @@ async function toggleMobility(key,mobKey){
   renderMobility();
 }
 
-// ── Check-in screen ───────────────────────────────────────
+// ── Daily log screen ──────────────────────────────────────
 function sv(id,vid){document.getElementById(vid).textContent=document.getElementById(id).value}
-async function saveCheckin(){
-  const e={id:Date.now(),date:document.getElementById('ci-date').value||today(),sessions:document.getElementById('ci-sessions').value,fatigue:document.getElementById('ci-fatigue').value,ql:document.getElementById('ci-ql').value,sleep:document.getElementById('ci-sleep').value,stress:document.getElementById('ci-stress').value,prs:document.getElementById('ci-prs').value,pliability:document.getElementById('ci-pliability').value,nutrition:document.getElementById('ci-nutrition').value,notes:document.getElementById('ci-notes').value};
-  const data=await dbGet(pk('tpcheckins'))||[];data.unshift(e);
-  setSyncState('syncing');await dbSet(pk('tpcheckins'),data);setSyncState('synced');
-  document.getElementById('ci-prs').value='';document.getElementById('ci-notes').value='';
-  showToast('Check-in saved!');renderCheckins();
+function getDayLabelForDate(dateStr){
+  const plan=getPlanForDate(dateStr);
+  const day=plan.days[getDayIdx(dateStr)];
+  return day?day.label:'';
 }
-async function renderCheckins(){
-  const data=await dbGet(pk('tpcheckins'))||[];
+async function saveDailyLog(){
+  const dateVal=document.getElementById('ci-date').value||today();
+  const e={id:Date.now(),date:dateVal,dayLabel:getDayLabelForDate(dateVal),fatigue:document.getElementById('ci-fatigue').value,ql:document.getElementById('ci-ql').value,sleep:document.getElementById('ci-sleep').value,stress:document.getElementById('ci-stress').value,prs:document.getElementById('ci-prs').value,pliability:document.getElementById('ci-pliability').value,nutrition:document.getElementById('ci-nutrition').value,notes:document.getElementById('ci-notes').value};
+  const data=await dbGet(pk('tpdailylogs'))||[];
+  const idx=data.findIndex(d=>d.date===dateVal);
+  if(idx>=0)data[idx]=e;else data.unshift(e);
+  setSyncState('syncing');await dbSet(pk('tpdailylogs'),data);setSyncState('synced');
+  document.getElementById('ci-prs').value='';document.getElementById('ci-notes').value='';
+  showToast('Log saved!');renderDailyLogs();
+}
+async function renderDailyLogs(){
+  const data=await dbGet(pk('tpdailylogs'))||[];
   const el=document.getElementById('checkin-history');
-  if(!data.length){el.innerHTML='<div class="empty-state">No check-ins yet</div>';return}
+  if(!data.length){el.innerHTML='<div class="empty-state">No logs yet</div>';return}
+  const fmtDate=d=>{const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})};
   el.innerHTML=data.map(c=>`<div class="ci-entry">
-    <div class="ci-entry-top"><span style="font-weight:500">Week ending ${c.date}</span><button class="del-btn" onclick="deleteCheckin(${c.id})">✕</button></div>
+    <div class="ci-entry-top"><div><span style="font-weight:500">${fmtDate(c.date)}</span>${c.dayLabel?`<div style="font-size:11px;color:var(--text3);margin-top:2px">${c.dayLabel}</div>`:''}</div><button class="del-btn" onclick="deleteDailyLog(${c.id})">✕</button></div>
     <div class="ci-entry-stats">
-      <span>Sessions <strong>${c.sessions}/7</strong></span>
       <span>Fatigue <strong style="color:${parseInt(c.fatigue)>=7?'var(--red)':'var(--text)'}">${c.fatigue}/10</strong></span>
       <span>QL <strong>${c.ql}/10</strong></span>
       <span>Sleep <strong style="color:var(--blue)">${c.sleep}h</strong></span>
@@ -838,9 +876,9 @@ async function renderCheckins(){
     ${c.notes?`<div style="margin-top:4px;font-size:12px;color:var(--text3)">${c.notes}</div>`:''}
   </div>`).join('');
 }
-async function deleteCheckin(id){
-  let data=await dbGet(pk('tpcheckins'))||[];data=data.filter(c=>c.id!==id);
-  await dbSet(pk('tpcheckins'),data);renderCheckins();
+async function deleteDailyLog(id){
+  let data=await dbGet(pk('tpdailylogs'))||[];data=data.filter(c=>c.id!==id);
+  await dbSet(pk('tpdailylogs'),data);renderDailyLogs();
 }
 
 // ── Copy for trainer ─────────────────────────────────────
@@ -852,17 +890,17 @@ function copyForTrainer(){
   const nowD=new Date(t+'T12:00:00');
   const wk=t<phase.startDate?1:Math.min(Math.floor((nowD-startD)/(7*864e5))+1,phase.weeks);
 
-  let allLogs=[],allStrength=[],allCardio=[],allCheckins=[];
+  let allLogs=[],allStrength=[],allCardio=[],allDailyLogs=[];
   for(const pid of phases){
     (lsGet(pid+':tplogs')||[]).forEach(l=>allLogs.push(l));
     (lsGet(pid+':tpstrength')||[]).forEach(l=>allStrength.push(l));
     (lsGet(pid+':tpcardio')||[]).forEach(l=>allCardio.push(l));
-    (lsGet(pid+':tpcheckins')||[]).forEach(l=>allCheckins.push(l));
+    (lsGet(pid+':tpdailylogs')||[]).forEach(l=>allDailyLogs.push(l));
   }
   allLogs.sort((a,b)=>b.date.localeCompare(a.date));
   allStrength.sort((a,b)=>b.date.localeCompare(a.date));
   allCardio.sort((a,b)=>b.date.localeCompare(a.date));
-  allCheckins.sort((a,b)=>b.date.localeCompare(a.date));
+  allDailyLogs.sort((a,b)=>b.date.localeCompare(a.date));
 
   const prs={};
   allStrength.forEach(e=>{if(!prs[e.exercise]||parseFloat(e.weight)>parseFloat(prs[e.exercise].weight))prs[e.exercise]=e;});
@@ -891,13 +929,15 @@ function copyForTrainer(){
   else{allCardio.slice(0,10).forEach(c=>{md+=`- ${c.date}: ${c.type} — ${c.duration} min${c.notes?'. "'+c.notes+'"':''}\n`;});}
   md+='\n';
 
-  if(allCheckins.length){
-    const ci=allCheckins[0];
-    md+=`## Latest weekly check-in (week ending ${ci.date})\n`;
-    md+=`- Sessions done: ${ci.sessions}/7 | Fatigue: ${ci.fatigue}/10 | QL pain: ${ci.ql}/10\n`;
-    md+=`- Sleep: ${ci.sleep}h | Stress: ${ci.stress}/10 | Pliability: ${ci.pliability} | Nutrition: ${ci.nutrition}\n`;
-    if(ci.prs)md+=`- PRs: ${ci.prs}\n`;
-    if(ci.notes)md+=`- Notes: ${ci.notes}\n`;
+  if(allDailyLogs.length){
+    md+=`## Daily logs (last 7)\n`;
+    allDailyLogs.slice(0,7).forEach(c=>{
+      md+=`### ${fmtDate(c.date)}${c.dayLabel?' — '+c.dayLabel:''}\n`;
+      md+=`- Fatigue: ${c.fatigue}/10 | QL pain: ${c.ql}/10 | Sleep: ${c.sleep}h | Stress: ${c.stress}/10\n`;
+      md+=`- Pliability: ${c.pliability} | Nutrition: ${c.nutrition}\n`;
+      if(c.prs)md+=`- PRs: ${c.prs}\n`;
+      if(c.notes)md+=`- Notes: ${c.notes}\n`;
+    });
     md+='\n';
   }
 
@@ -921,15 +961,36 @@ function goTo(screen){
   document.getElementById('nav-'+screen).classList.add('active');
   document.getElementById('main-content').scrollTop=0;
   if(screen==='lift')renderLift();
-  if(screen==='cardio')renderCardio();
+  if(screen==='cardio'){
+    // Pre-fill cardio type based on today's plan day
+    const todayDay=getPlanForDate(today()).days[getDayIdx(today())];
+    if(todayDay&&todayDay.type==='cardio'){
+      const label=(todayDay.label||'').toLowerCase();
+      const typeEl=document.getElementById('cardio-type');
+      if(label.includes('sprint')||label.includes('speed'))typeEl.value='Sprint work';
+      else if(label.includes('aerobic')||label.includes('zone'))typeEl.value='Zone 2';
+    }
+    document.getElementById('cardio-date').value=today();
+    renderCardio();
+  }
   if(screen==='mobility')renderMobility();
-  if(screen==='log'){document.getElementById('ci-date').value=today();renderCheckins();}
+  if(screen==='log'){
+    const t=today();
+    document.getElementById('ci-date').value=t;
+    const lbl=getDayLabelForDate(t);
+    const lblEl=document.getElementById('ci-day-label');
+    if(lblEl)lblEl.textContent=lbl;
+    renderDailyLogs();
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────
 async function init(){
   document.getElementById('app-title').textContent='TRAINING TRACKER';
-  document.getElementById('ci-date').value=today();
+  const t=today();
+  document.getElementById('ci-date').value=t;
+  const lblEl=document.getElementById('ci-day-label');
+  if(lblEl)lblEl.textContent=getDayLabelForDate(t);
   await buildWeekStrip();
   await loadAndRenderToday();
 }
