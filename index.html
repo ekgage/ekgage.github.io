@@ -84,10 +84,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .ex-check svg{width:12px;height:12px;stroke:#0f0f0e;fill:none;stroke-width:2.5}
 .ex-sets{display:none;padding:0 14px 12px;border-top:0.5px solid var(--border)}
 .ex-sets.open{display:block}
-.set-header-row{display:grid;grid-template-columns:28px 1fr 1fr 30px;gap:8px;padding:6px 0 4px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.set-header-row{display:grid;grid-template-columns:28px 1fr 1fr 30px 24px;gap:8px;padding:6px 0 4px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
 .set-header-row span{text-align:center}
-.set-row{display:grid;grid-template-columns:28px 1fr 1fr 30px;gap:8px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)}
+.set-row{display:grid;grid-template-columns:28px 1fr 1fr 30px 24px;gap:8px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)}
 .set-row:last-of-type{border-bottom:none}
+.reps-cell{display:flex;align-items:center;gap:4px;min-width:0}
+.reps-slider{flex:1;min-width:0;width:auto;padding:0;border:none;background:none;accent-color:var(--accent);cursor:pointer;height:20px}
+.reps-val{font-size:12px;font-family:'DM Mono',monospace;min-width:18px;text-align:right;color:var(--text)}
+.set-del-btn{width:24px;height:28px;border:none;background:none;color:var(--text3);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-radius:4px;line-height:1}
+.set-del-btn:active{color:var(--red)}
+.ex-last-weight{font-size:11px;color:var(--accent);margin-top:2px;font-family:'DM Mono',monospace;opacity:.8}
 .set-num{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center}
 .set-input{background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:7px 6px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);text-align:center;width:100%;-webkit-appearance:none}
 .set-input:focus{outline:none;border-color:var(--accent)}
@@ -348,7 +354,7 @@ async function dbSet(k,v){
 }
 
 // ── App state ─────────────────────────────────────────────
-let currentDate=today(),openEx={},openBlocks={},sessionData={},weekOffset=0;
+let currentDate=today(),openEx={},openBlocks={},sessionData={},weekOffset=0,lastWeightCache={};
 
 // ── Plan date helpers ─────────────────────────────────────
 const PLAN_START=PLANS[0].startDate;
@@ -435,11 +441,27 @@ async function updateProgressBar(){
   badge.style.fontFamily="'DM Mono',monospace";
 }
 
+function parseDefaultReps(repsStr){
+  if(!repsStr)return 8;
+  const nums=String(repsStr).match(/\d+/g);
+  return nums?parseInt(nums[0]):8;
+}
+function fmtShortDate(iso){
+  const d=new Date(iso+'T12:00:00');
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
 // ── Today screen ──────────────────────────────────────────
 async function loadAndRenderToday(){
   const dayPid=getPlanForDate(currentDate).id;
   const saved=await dbGet(dayPid+':session-'+currentDate);
   sessionData=saved||{};
+  // Build last-weight lookup: most recent entry per exercise before currentDate
+  const allStrength=[];
+  for(const p of PLANS){const s=await dbGet(p.id+':tpstrength')||[];allStrength.push(...s);}
+  allStrength.sort((a,b)=>b.date.localeCompare(a.date));
+  lastWeightCache={};
+  allStrength.forEach(e=>{if(e.date<currentDate&&!lastWeightCache[e.exercise])lastWeightCache[e.exercise]=e;});
   renderToday();
 }
 
@@ -495,26 +517,34 @@ function renderToday(){
     block.ex.forEach((ex,ei)=>{
       const k=`${currentDate}_${bi}_${ei}`;
       const sv=sessionData[k]||{sets:[],done:false};
+      const lw=ex.sets>0?lastWeightCache[ex.name]:null;
+      const lwHtml=lw?`<div class="ex-last-weight">Last: ${lw.weight} lbs · ${fmtShortDate(lw.date)}</div>`:'';
       html+=`<div class="ex-card${sv.done?' done':''}" id="ec-${k}">
         <div class="ex-card-header" onclick="toggleEx('${k}',${ex.sets})">
-          <div class="ex-info"><div class="ex-name">${ex.name}</div><div class="ex-presc">${ex.presc}</div></div>
+          <div class="ex-info"><div class="ex-name">${ex.name}</div><div class="ex-presc">${ex.presc}</div>${lwHtml}</div>
           <div class="ex-check${sv.done?' checked':''}" onclick="event.stopPropagation();toggleDone('${k}')">
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg>
           </div>
         </div>`;
       if(ex.sets>0){
+        const defRepsVal=parseDefaultReps(ex.reps);
         const sc=sv.sets.length>0?sv.sets.length:ex.sets;
         html+=`<div class="ex-sets${openEx[k]?' open':''}" id="es-${k}">
-          <div class="set-header-row"><span>#</span><span>Weight</span><span>Reps</span><span></span></div>`;
+          <div class="set-header-row"><span>#</span><span>Weight</span><span>Reps</span><span></span><span></span></div>`;
         for(let s=0;s<sc;s++){
           const sd=sv.sets[s]||{};
+          const repVal=parseInt(sd.reps)||defRepsVal;
           html+=`<div class="set-row" id="sr-${k}-${s}">
             <span class="set-num">${s+1}</span>
             <input class="set-input" type="number" placeholder="lbs" value="${sd.weight||''}" inputmode="decimal" oninput="setField('${k}',${s},'weight',this.value)">
-            <input class="set-input" type="text" placeholder="${ex.reps||''}" value="${sd.reps||''}" oninput="setField('${k}',${s},'reps',this.value)">
+            <div class="reps-cell">
+              <input type="range" min="1" max="30" value="${repVal}" class="reps-slider" oninput="this.nextElementSibling.textContent=this.value;setField('${k}',${s},'reps',this.value)">
+              <span class="reps-val">${repVal}</span>
+            </div>
             <button class="set-done-btn${sd.done?' done':''}" onclick="toggleSetDone('${k}',${s})">
               <svg viewBox="0 0 24 24" width="12" height="12" stroke="#0f0f0e" fill="none" stroke-width="2.5"><polyline points="20 6 9 13 4 10"/></svg>
             </button>
+            <button class="set-del-btn" onclick="deleteSet('${k}',${s})">×</button>
           </div>`;
         }
         html+=`<button class="add-set-btn" onclick="addSet('${k}','${ex.reps||''}')">+ add set</button></div>`;
@@ -566,21 +596,32 @@ function setField(k,si,field,val){
 }
 function addSet(k,defReps){
   if(!sessionData[k])sessionData[k]={sets:[],done:false};
-  const si=sessionData[k].sets.length;
-  sessionData[k].sets.push({weight:'',reps:'',done:false});
   const container=document.getElementById('es-'+k);
-  if(container){
-    const row=document.createElement('div');
-    row.className='set-row';row.id=`sr-${k}-${si}`;
-    row.innerHTML=`<span class="set-num">${si+1}</span>
-      <input class="set-input" type="number" placeholder="lbs" inputmode="decimal" oninput="setField('${k}',${si},'weight',this.value)">
-      <input class="set-input" type="text" placeholder="${defReps}" oninput="setField('${k}',${si},'reps',this.value)">
-      <button class="set-done-btn" onclick="toggleSetDone('${k}',${si})">
-        <svg viewBox="0 0 24 24" width="12" height="12" stroke="#0f0f0e" fill="none" stroke-width="2.5"><polyline points="20 6 9 13 4 10"/></svg>
-      </button>`;
-    container.querySelector('.add-set-btn').before(row);
-  }
+  if(!container)return;
+  // Use DOM row count as authoritative index — avoids conflicts with prescribed rows not yet in sessionData
+  const si=container.querySelectorAll('.set-row').length;
+  sessionData[k].sets[si]={weight:'',reps:'',done:false};
+  const repVal=parseDefaultReps(defReps);
+  const row=document.createElement('div');
+  row.className='set-row';row.id=`sr-${k}-${si}`;
+  row.innerHTML=`<span class="set-num">${si+1}</span>
+    <input class="set-input" type="number" placeholder="lbs" inputmode="decimal" oninput="setField('${k}',${si},'weight',this.value)">
+    <div class="reps-cell">
+      <input type="range" min="1" max="30" value="${repVal}" class="reps-slider" oninput="this.nextElementSibling.textContent=this.value;setField('${k}',${si},'reps',this.value)">
+      <span class="reps-val">${repVal}</span>
+    </div>
+    <button class="set-done-btn" onclick="toggleSetDone('${k}',${si})">
+      <svg viewBox="0 0 24 24" width="12" height="12" stroke="#0f0f0e" fill="none" stroke-width="2.5"><polyline points="20 6 9 13 4 10"/></svg>
+    </button>
+    <button class="set-del-btn" onclick="deleteSet('${k}',${si})">×</button>`;
+  container.querySelector('.add-set-btn').before(row);
   debounceSave();
+}
+function deleteSet(k,si){
+  if(!sessionData[k])return;
+  sessionData[k].sets.splice(si,1);
+  debounceSave();
+  renderToday();
 }
 function updateDoneCount(){
   const plan=getPlanForDate(currentDate).days[getDayIdx(currentDate)];
