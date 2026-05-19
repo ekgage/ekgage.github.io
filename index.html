@@ -75,6 +75,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .block-body.open{display:block}
 .ex-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .2s}
 .ex-card.done{border-color:var(--accent)}
+.drag-handle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;color:var(--text3);cursor:grab;flex-shrink:0;touch-action:none;opacity:0.5;transition:opacity .15s;-webkit-tap-highlight-color:transparent}
+.drag-handle:active{cursor:grabbing;opacity:1}
+.drag-handle svg{width:14px;height:14px}
+.ex-card.sortable-ghost{opacity:0.35;background:var(--bg3);border:0.5px dashed var(--border2)}
+.ex-card.sortable-drag{box-shadow:0 8px 24px rgba(0,0,0,0.5);border-color:var(--accent)!important}
 .ex-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;gap:8px;-webkit-tap-highlight-color:transparent}
 .ex-info{flex:1;min-width:0}
 .ex-name{font-size:14px;font-weight:500}
@@ -309,6 +314,7 @@ textarea{height:72px;resize:vertical}
 <div class="toast" id="toast"></div>
 
 <script src="full-plan.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
 // ── Derive active plan from today's date ──────────────────
 function _addDays(dateStr,n){const d=new Date(dateStr+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
@@ -348,7 +354,7 @@ async function dbSet(k,v){
 }
 
 // ── App state ─────────────────────────────────────────────
-let currentDate=today(),openEx={},openBlocks={},sessionData={},weekOffset=0;
+let currentDate=today(),openEx={},openBlocks={},sessionData={},exOrder={},weekOffset=0;
 
 // ── Plan date helpers ─────────────────────────────────────
 const PLAN_START=PLANS[0].startDate;
@@ -438,8 +444,12 @@ async function updateProgressBar(){
 // ── Today screen ──────────────────────────────────────────
 async function loadAndRenderToday(){
   const dayPid=getPlanForDate(currentDate).id;
-  const saved=await dbGet(dayPid+':session-'+currentDate);
+  const [saved,savedOrder]=await Promise.all([
+    dbGet(dayPid+':session-'+currentDate),
+    dbGet(dayPid+':exorder-'+currentDate)
+  ]);
   sessionData=saved||{};
+  exOrder=savedOrder||{};
   renderToday();
 }
 
@@ -492,11 +502,17 @@ function renderToday(){
         <span class="block-arrow">▾</span>
       </div>
       <div class="block-body${blockOpen?' open':''}" id="bb-${bk}">`;
-    block.ex.forEach((ex,ei)=>{
+    const naturalOrder=block.ex.map((_,i)=>i);
+    const displayOrder=(exOrder[bi]&&exOrder[bi].length===block.ex.length)?exOrder[bi]:naturalOrder;
+    displayOrder.forEach((ei)=>{
+      const ex=block.ex[ei];
       const k=`${currentDate}_${bi}_${ei}`;
       const sv=sessionData[k]||{sets:[],done:false};
-      html+=`<div class="ex-card${sv.done?' done':''}" id="ec-${k}">
+      html+=`<div class="ex-card${sv.done?' done':''}" id="ec-${k}" data-orig-idx="${ei}">
         <div class="ex-card-header" onclick="toggleEx('${k}',${ex.sets})">
+          <div class="drag-handle" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><circle cx="7" cy="5" r="1.5"/><circle cx="13" cy="5" r="1.5"/><circle cx="7" cy="10" r="1.5"/><circle cx="13" cy="10" r="1.5"/><circle cx="7" cy="15" r="1.5"/><circle cx="13" cy="15" r="1.5"/></svg>
+          </div>
           <div class="ex-info"><div class="ex-name">${ex.name}</div><div class="ex-presc">${ex.presc}</div></div>
           <div class="ex-check${sv.done?' checked':''}" onclick="event.stopPropagation();toggleDone('${k}')">
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 13 4 10"/></svg>
@@ -526,6 +542,7 @@ function renderToday(){
   html+=`<button class="complete-session-btn" id="complete-btn" onclick="completeSession()">Complete session</button>`;
   document.getElementById('today-content').innerHTML=html;
   updateDoneCount();
+  initSortable();
 }
 
 function toggleBlock(bk){
@@ -630,6 +647,37 @@ async function completeSession(){
   const btn=document.getElementById('complete-btn');
   if(btn){btn.textContent='✓ Session saved';btn.classList.add('done-state')}
   showToast(newLifts.length?`Session saved! ${newLifts.length} lift${newLifts.length>1?'s':''} imported.`:'Session saved!');
+}
+let orderSaveTimer;
+function debounceOrderSave(){
+  clearTimeout(orderSaveTimer);
+  const dayPid=getPlanForDate(currentDate).id;
+  orderSaveTimer=setTimeout(async()=>{
+    await dbSet(dayPid+':exorder-'+currentDate,exOrder);
+  },400);
+}
+function initSortable(){
+  if(typeof Sortable==='undefined')return;
+  const planForDay=getPlanForDate(currentDate);
+  const plan=planForDay.days[getDayIdx(currentDate)];
+  plan.blocks.forEach((block,bi)=>{
+    const bk=`block-${currentDate}-${bi}`;
+    const container=document.getElementById('bb-'+bk);
+    if(!container)return;
+    Sortable.create(container,{
+      animation:150,
+      handle:'.drag-handle',
+      ghostClass:'sortable-ghost',
+      dragClass:'sortable-drag',
+      group:`block-${bi}`,
+      onEnd(){
+        const cards=container.querySelectorAll('.ex-card[data-orig-idx]');
+        const newOrder=Array.from(cards).map(el=>parseInt(el.dataset.origIdx,10));
+        exOrder[bi]=newOrder;
+        debounceOrderSave();
+      }
+    });
+  });
 }
 let saveTimer;
 function debounceSave(){
