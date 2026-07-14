@@ -492,15 +492,15 @@ const PLANS = [
   },
 
   {
-    id: "phase3b",
-    name: "Transition Week — Placeholder",
-    weeks: 6/7,
-    startDate: "2026-07-14",
+    id: "bridge-2026-07-14",
+    name: "Bridge Week — Recovery before Phase 4",
+    weeks: 1,
+    startDate: "2026-07-13",
     weekNotes: [
-      "Bridge week before Phase 4 starts (7/20). Placeholder days — fill in real programming."
+      "Travel fatigue (red-eye) + 54 holes of golf this weekend. Light/placeholder training only — Phase 4 start pushed to Monday 7/20."
     ],
     days: [
-      { day:"Monday", label:"Placeholder — not used", tag:"TBD", type:"rest", blocks:[
+      { day:"Monday", label:"Already passed", tag:"N/A", type:"rest", blocks:[
         { name:"Daily minimum", dur:"10 min", ex:[
           {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
           {name:"Hip 90/90",presc:"60 sec/side",sets:0},
@@ -509,8 +509,53 @@ const PLANS = [
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
       ]},
-      { day:"Tuesday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
-        { name:"Daily minimum", dur:"10 min", ex:[
+      { day:"Tuesday", label:"Lower body (light)", tag:"Recovery before golf", type:"lift", blocks:[
+        { name:"Pliability warm-up", dur:"15 min", ex:[
+          {name:"Foam roll quads",presc:"90 sec/side",sets:0},
+          {name:"Foam roll hamstrings + glutes",presc:"90 sec/side",sets:0},
+          {name:"90/90 hip stretch",presc:"60 sec/side",sets:0},
+          {name:"Hip flexor kneeling stretch",presc:"45 sec/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Leg swings (sagittal + frontal)",presc:"10 reps/side",sets:0}
+        ]},
+        { name:"Strength block (light)", dur:"25 min", ex:[
+          {name:"Trap bar deadlift",presc:"3×5 @ RPE 5, technique focus",sets:3,reps:"5"},
+          {name:"Goblet squat",presc:"2×10 @ RPE 5",sets:2,reps:"10"},
+          {name:"Glute bridges",presc:"2×15",sets:2,reps:"15"}
+        ]},
+        { name:"Cool-down pliability", dur:"12 min", ex:[
+          {name:"Supine hamstring stretch",presc:"90 sec/side",sets:0},
+          {name:"Couch stretch",presc:"90 sec/side",sets:0},
+          {name:"Pigeon pose",presc:"2 min/side",sets:0},
+          {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"3 min",sets:0}
+        ]}
+      ]},
+      { day:"Wednesday", label:"Upper body (light)", tag:"Recovery before golf", type:"lift", blocks:[
+        { name:"Pliability warm-up", dur:"15 min", ex:[
+          {name:"Thoracic foam roll",presc:"90 sec",sets:0},
+          {name:"Pec minor doorway stretch",presc:"45 sec/side",sets:0},
+          {name:"Shoulder CARs",presc:"5 reps/side",sets:0},
+          {name:"Thread the needle",presc:"5 reps/side",sets:0},
+          {name:"Band pull-aparts",presc:"2×20",sets:2,reps:"20"}
+        ]},
+        { name:"Strength block (light)", dur:"25 min", ex:[
+          {name:"Incline dumbbell press",presc:"3×8 @ RPE 5",sets:3,reps:"8"},
+          {name:"Cable row (neutral grip)",presc:"3×8 @ RPE 5",sets:3,reps:"8"},
+          {name:"Face pulls",presc:"2×15",sets:2,reps:"15"}
+        ]},
+        { name:"Cool-down pliability", dur:"10 min", ex:[
+          {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
+          {name:"Cross-body posterior shoulder",presc:"60 sec/side",sets:0},
+          {name:"Overhead lat stretch",presc:"60 sec/side",sets:0},
+          {name:"Thoracic extension over foam roll",presc:"90 sec",sets:0}
+        ]}
+      ]},
+      { day:"Thursday", label:"Light cardio / rest (optional)", tag:"Recovery", type:"cardio", blocks:[
+        { name:"Zone 2 cardio (optional — skip if still fatigued)", dur:"20 min", ex:[
+          {name:"Assault bike or treadmill",presc:"Zone 2, easy conversational pace, entirely optional",sets:0}
+        ]},
+        { name:"Pliability minimum (if skipping cardio)", dur:"10 min", ex:[
           {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
           {name:"Hip 90/90",presc:"60 sec/side",sets:0},
           {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
@@ -518,48 +563,27 @@ const PLANS = [
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
       ]},
-      { day:"Wednesday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
-        { name:"Daily minimum", dur:"10 min", ex:[
-          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+      { day:"Friday", label:"Golf (54 holes this weekend) — no lifting", tag:"Recovery priority", type:"rest", blocks:[
+        { name:"Evening pliability minimum", dur:"10 min", ex:[
           {name:"Hip 90/90",presc:"60 sec/side",sets:0},
           {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Hamstring stretch",presc:"60 sec/side",sets:0},
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
       ]},
-      { day:"Thursday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
-        { name:"Daily minimum", dur:"10 min", ex:[
-          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+      { day:"Saturday", label:"Golf (54 holes this weekend) — no lifting", tag:"Recovery priority", type:"rest", blocks:[
+        { name:"Evening pliability minimum", dur:"10 min", ex:[
           {name:"Hip 90/90",presc:"60 sec/side",sets:0},
           {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Hamstring stretch",presc:"60 sec/side",sets:0},
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
       ]},
-      { day:"Friday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
-        { name:"Daily minimum", dur:"10 min", ex:[
-          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+      { day:"Sunday", label:"Golf (54 holes this weekend) — no lifting", tag:"Recovery priority", type:"rest", blocks:[
+        { name:"Evening pliability minimum", dur:"10 min", ex:[
           {name:"Hip 90/90",presc:"60 sec/side",sets:0},
           {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
-          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
-        ]}
-      ]},
-      { day:"Saturday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
-        { name:"Daily minimum", dur:"10 min", ex:[
-          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
-          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
-          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
-          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
-        ]}
-      ]},
-      { day:"Sunday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
-        { name:"Daily minimum", dur:"10 min", ex:[
-          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
-          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
-          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Hamstring stretch",presc:"60 sec/side",sets:0},
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
       ]}
