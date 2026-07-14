@@ -492,10 +492,85 @@ const PLANS = [
   },
 
   {
+    id: "phase3b",
+    name: "Transition Week — Placeholder",
+    weeks: 6/7,
+    startDate: "2026-07-14",
+    weekNotes: [
+      "Bridge week before Phase 4 starts (7/20). Placeholder days — fill in real programming."
+    ],
+    days: [
+      { day:"Monday", label:"Placeholder — not used", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Tuesday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Wednesday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Thursday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Friday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Saturday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Sunday", label:"Placeholder — fill in later", tag:"TBD", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]}
+    ]
+  },
+
+  {
     id: "phase4",
     name: "Phase 4 — Upper Body Intensification + Aerobic Base",
     weeks: 6,
-    startDate: "2026-07-13",
+    startDate: "2026-07-20",
     weekNotes: [
       "Week 1 — Baseline reset after CA travel week. Test 3RM trap bar deadlift + 3RM incline DB/Swiss bar press. Lower body submaximal all week. New movements (flat DB bench, seated DB press, weighted pull-ups) start light to establish real numbers.",
       "Week 2 — Progress upper body load on established lifts. First real load added to pull-ups (10-25 lbs). Zone 2 duration builds. Lower stays maintenance.",
