@@ -2,7 +2,7 @@ const ACTIVE_PLAN = {
   id: "phase4",
   name: "Phase 4 — Upper Body Intensification + Aerobic Base",
   weeks: 6,
-  startDate: "2026-07-13",
+  startDate: "2026-07-20",
   weekNotes: [
     "Week 1 — Baseline reset after CA travel week. Test 3RM trap bar deadlift + 3RM incline DB/Swiss bar press. Lower body submaximal all week. New movements (flat DB bench, seated DB press, weighted pull-ups) start light to establish real numbers.",
     "Week 2 — Progress upper body load on established lifts. First real load added to pull-ups (10-25 lbs). Zone 2 duration builds. Lower stays maintenance.",
