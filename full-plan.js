@@ -765,5 +765,147 @@ const PLANS = [
         ]}
       ]}
     ]
+  },
+
+  {
+    id: "phase5",
+    name: "Phase 5 — Return to Training + Recomp Base",
+    weeks: 4,
+    startDate: "2026-08-31",
+    weekNotes: [
+      "Week 1 — First structured week back after 6 weeks off (last trained July 16). Lifts capped at RPE 6–7, technique and hip mobility over load. Cardio treated as a true from-zero rebuild, not a pickup-where-you-left-off: short duration, low-impact modalities preferred (bike/row/incline walk over running), Zone 2 HR cap not pace. Don't chase July's numbers on either front this week.",
+      "Week 2 — Build. Nudge lift loads up based on how Week 1 felt — aim for RPE 7 on the main compounds. Cardio duration ticks up on the same conservative step-pattern below — resist the urge to jump ahead just because Week 1 felt easy, the engine comes back faster than tendons and joints do. Nutrition should be fully dialed in by now if Week 1 was just getting the habit started.",
+      "Week 3 — Continue building lifts toward pre-layoff working weights where RPE allows — six weeks off doesn't hit every movement pattern equally. Cardio hits its longest durations of the block this week. If running has been part of the mix, this is the earliest point to consider stringing continuous minutes together instead of run/walk — only if it's felt clean, not on schedule alone.",
+      "Week 4 — Deload + reassessment. Lift volume down ~30-40%, intensity stays moderate. Cardio drops to easy/short too — but that's a deload, not a reset: Phase 6 picks cardio back up from wherever Week 3 landed, it doesn't restart the ramp. End of week, check in on the hips, the QL under real load, and where the recomp is trending. That decides whether Phase 6 keeps building this base or shifts back toward performance."
+    ],
+    days: [
+      { day:"Monday", label:"Full body A — hinge + push", tag:"Foundation reset", type:"lift", blocks:[
+        { name:"Pliability warm-up", dur:"15 min", ex:[
+          {name:"Foam roll quads",presc:"90 sec/side",sets:0},
+          {name:"Foam roll hamstrings + glutes",presc:"90 sec/side",sets:0},
+          {name:"Hip flexor kneeling stretch",presc:"45 sec/side — priority item right now, hips have been tight",sets:0},
+          {name:"90/90 hip stretch (internal + external)",presc:"60 sec/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Leg swings (sagittal + frontal)",presc:"10 reps/side",sets:0},
+          {name:"Glute bridges",presc:"2×15, 1 sec pause",sets:2,reps:"15"}
+        ]},
+        { name:"Strength block", dur:"40 min", ex:[
+          {name:"Trap bar deadlift",presc:"Wk1: 3×6 @ RPE 6-7, technique focus, let it land wherever it lands. Wk2: 3×6 @ RPE 7. Wk3: 4×5 @ RPE 7-8, pushing back toward working weight. Wk4 deload: 2×5 @ RPE 5-6",sets:3,reps:"6"},
+          {name:"Romanian deadlift",presc:"3×10, 3-sec eccentric",sets:3,reps:"10"},
+          {name:"Bulgarian split squat",presc:"3×8/side — keep depth comfortable this week given hip tightness, full range as it opens up",sets:3,reps:"8"},
+          {name:"Pallof press",presc:"3×10/side, moderate band",sets:3,reps:"10"},
+          {name:"Dead bug",presc:"3×8/side",sets:3,reps:"8"}
+        ]},
+        { name:"Cool-down pliability", dur:"12 min", ex:[
+          {name:"Supine hamstring stretch",presc:"90 sec/side",sets:0},
+          {name:"Couch stretch",presc:"90 sec/side",sets:0},
+          {name:"Pigeon pose",presc:"2 min/side",sets:0},
+          {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"3 min",sets:0}
+        ]}
+      ]},
+      { day:"Tuesday", label:"Zone 2 + hip mobility", tag:"Aerobic base, outside gym", type:"cardio", blocks:[
+        { name:"Zone 2 cardio — from-zero rebuild", dur:"15-25 min", ex:[
+          {name:"Bike, row, or incline walk — Zone 2, HR 130-145",presc:"Low-impact preferred right now — the aerobic engine comes back faster than tendons and joints do, no reason to rush impact. Wk1: 15 min continuous, easy. Wk2: 20 min. Wk3: 25 min. Wk4 deload: 15 min easy. If a step up feels rough, repeat the current duration one more week rather than pushing — this is a floor, not a mandate.",sets:0},
+          {name:"If running instead — run/walk intervals only this block",presc:"Wk1: 1 min jog / 2 min walk × 5 rounds (15 min). Wk2: 2 min jog / 2 min walk × 5 (20 min). Wk3: 3 min jog / 1 min walk × 6 (24 min). Save continuous running for Phase 6 once these intervals feel easy, not on a fixed schedule.",sets:0}
+        ]},
+        { name:"Hip mobility focus", dur:"15 min", ex:[
+          {name:"Kneeling hip flexor stretch",presc:"60 sec/side",sets:0},
+          {name:"Couch stretch",presc:"90 sec/side",sets:0},
+          {name:"90/90 hip CARs (internal + external)",presc:"8 reps/side, slow and controlled",sets:0},
+          {name:"Pigeon pose",presc:"90 sec/side",sets:0},
+          {name:"Deficit reverse lunge",presc:"2×8/side bodyweight — loaded hip flexor stretch, keep it light",sets:2,reps:"8"}
+        ]}
+      ]},
+      { day:"Wednesday", label:"Full body B — pull + golf rotation", tag:"Upper + rotational", type:"lift", blocks:[
+        { name:"Pliability warm-up", dur:"15 min", ex:[
+          {name:"Thoracic foam roll",presc:"90 sec",sets:0},
+          {name:"Pec minor doorway stretch",presc:"45 sec/side",sets:0},
+          {name:"Shoulder CARs",presc:"5 reps/side",sets:0},
+          {name:"Thread the needle",presc:"5 reps/side",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Band pull-aparts",presc:"2×20",sets:2,reps:"20"}
+        ]},
+        { name:"Strength block", dur:"45 min", ex:[
+          {name:"Incline dumbbell press",presc:"3×10 @ RPE 7, moderate load — hypertrophy range this block, not chasing the old 4×6 RPE8 weight yet",sets:3,reps:"10"},
+          {name:"Neutral grip pull-ups / lat pulldown",presc:"3×8-10 bodyweight. If 8+ reps feels like RPE 6 or easier by Wk3, add light load",sets:3,reps:"10"},
+          {name:"Cable row (neutral grip)",presc:"3×10 @ moderate load, build back toward 160 lb mark by end of block",sets:3,reps:"10"},
+          {name:"Goblet squat — tempo",presc:"3×10, 3-sec down, 1-sec pause — lower-stress way to keep squat pattern in without loading the spine heavy this week",sets:3,reps:"10"},
+          {name:"Landmine rotations",presc:"3×8/side, light-moderate — rebuilding from scratch, don't reference the 45-50 lb Phase 4 mark yet",sets:3,reps:"8"},
+          {name:"Face pulls",presc:"3×15",sets:3,reps:"15"}
+        ]},
+        { name:"Cool-down pliability", dur:"10 min", ex:[
+          {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
+          {name:"Cross-body posterior shoulder",presc:"60 sec/side",sets:0},
+          {name:"Overhead lat stretch",presc:"60 sec/side",sets:0},
+          {name:"Couch stretch",presc:"60 sec/side",sets:0}
+        ]}
+      ]},
+      { day:"Thursday", label:"Zone 2 + daily mobility", tag:"Second cardio day", type:"cardio", blocks:[
+        { name:"Zone 2 cardio", dur:"15-30 min", ex:[
+          {name:"Bike, row, incline walk, or run/walk intervals — Zone 2, HR 130-145",presc:"Wk1: 15-20 min. Wk2: 20-25 min. Wk3: 25-30 min. Wk4 deload: 15-20 min easy. A golf round can cover this specific day if you're playing — 18 holes of walking is real aerobic time — but don't let golf replace Tuesday or Saturday's sessions, those are the ones actually building the base.",sets:0}
+        ]},
+        { name:"Daily minimum pliability", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Friday", label:"Full body C — power + golf + conditioning", tag:"Athletic + metabolic", type:"lift", blocks:[
+        { name:"Pliability warm-up", dur:"15 min", ex:[
+          {name:"Full body foam roll",presc:"4 min",sets:0},
+          {name:"Hip flexor kneeling stretch",presc:"45 sec/side",sets:0},
+          {name:"90/90 hip rotations",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Leg swings",presc:"10 reps/side",sets:0}
+        ]},
+        { name:"Power + athletic block", dur:"35 min", ex:[
+          {name:"Trap bar deadlift — speed focus",presc:"3×3 @ ~50% RPE6, explosive intent, full reset between reps",sets:3,reps:"3"},
+          {name:"Single-leg RDL",presc:"3×8/side, light-moderate — balance and hip hinge pattern over load right now",sets:3,reps:"8"},
+          {name:"Rotational med ball slam",presc:"3×8/side, moderate intent — rebuilding from the 8lb/5x6 Phase 3 mark",sets:3,reps:"8"},
+          {name:"Dumbbell row (3-point stance)",presc:"3×10/side",sets:3,reps:"10"},
+          {name:"Single-leg balance + rotation",presc:"3×10/side",sets:3,reps:"10"}
+        ]},
+        { name:"Conditioning finisher", dur:"12 min", ex:[
+          {name:"Sled push/pull + farmer carry circuit",presc:"Wk1: 3 rounds — sled push 20m, farmer carry 20m, walk-back recovery, moderate load, learn the pacing. Wk2-3: add a round or tighten rest. Wk4 deload: 2 easy rounds only",sets:0}
+        ]},
+        { name:"Cool-down", dur:"10 min", ex:[
+          {name:"Doorway pec stretch",presc:"90 sec/side",sets:0},
+          {name:"Pigeon pose",presc:"90 sec/side",sets:0},
+          {name:"Couch stretch",presc:"90 sec/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]},
+      { day:"Saturday", label:"Long aerobic + full pliability", tag:"Base building", type:"cardio", blocks:[
+        { name:"Cardio — the real base-building session", dur:"20-35 min", ex:[
+          {name:"Option A — easy jog/walk-run or brisk incline walk",presc:"Zone 2, conversational, this is the longest session of the week — don't skip ahead on it. Wk1: 20 min. Wk2: 28 min. Wk3: 35 min. Wk4 deload: 20 min easy. Running volume lags behind cardio fitness after a layoff — if legs feel beat up rather than lungs, swap to Option B for a week and keep building time instead of pounding pavement.",sets:0},
+          {name:"Option B — assault bike / row erg (default low-impact choice)",presc:"Same duration targets as Option A: Wk1 20 min, Wk2 28 min, Wk3 35 min, Wk4 deload 20 min. Good default for the first couple weeks regardless of running plans — takes joint stress off the table while the aerobic engine rebuilds. Phase 6 is where 40-45+ min comes back into play.",sets:0},
+          {name:"Option C — golf round counts as active recovery, not a substitute for structured Zone 2",presc:"n/a",sets:0}
+        ]},
+        { name:"Full pliability session", dur:"30 min", ex:[
+          {name:"Full body foam roll",presc:"5 min",sets:0},
+          {name:"Child's pose to cobra",presc:"5 reps",sets:0},
+          {name:"Pigeon pose",presc:"2 min/side",sets:0},
+          {name:"90/90 hip stretch",presc:"90 sec/side",sets:0},
+          {name:"Couch stretch",presc:"90 sec/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"Supine hamstring with strap",presc:"90 sec/side",sets:0},
+          {name:"Reclined spinal twist",presc:"60 sec/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"5 min",sets:0}
+        ]}
+      ]},
+      { day:"Sunday", label:"Rest + pliability minimum", tag:"Recovery", type:"rest", blocks:[
+        { name:"Daily minimum", dur:"10 min", ex:[
+          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
+          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
+          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
+          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+          {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
+        ]}
+      ]}
+    ]
   }
 ];
