@@ -841,15 +841,24 @@ const PLANS = [
           {name:"Couch stretch",presc:"60 sec/side",sets:0}
         ]}
       ]},
-      { day:"Thursday", label:"Zone 2 + daily mobility", tag:"Second cardio day", type:"cardio", blocks:[
-        { name:"Zone 2 cardio", dur:"15-30 min", ex:[
-          {name:"Bike, row, incline walk, or run/walk intervals — Zone 2, HR 130-145",presc:"Wk1: 15-20 min. Wk2: 20-25 min. Wk3: 25-30 min. Wk4 deload: 15-20 min easy. A golf round can cover this specific day if you're playing — 18 holes of walking is real aerobic time — but don't let golf replace Tuesday or Saturday's sessions, those are the ones actually building the base.",sets:0}
+      { day:"Thursday", label:"Sprint mechanics — reintroduction", tag:"Second cardio day", type:"cardio", blocks:[
+        { name:"Sprint warm-up", dur:"10 min", ex:[
+          {name:"Easy jog",presc:"400m",sets:0},
+          {name:"High knees",presc:"2×15m",sets:0},
+          {name:"Butt kicks",presc:"2×15m",sets:0},
+          {name:"A-skips",presc:"2×15m, easy",sets:0},
+          {name:"Leg swings (sagittal + frontal)",presc:"10 reps/side",sets:0}
         ]},
-        { name:"Daily minimum pliability", dur:"10 min", ex:[
-          {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
-          {name:"Hip 90/90",presc:"60 sec/side",sets:0},
-          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
-          {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
+        { name:"Sprint mechanics + submax speed", dur:"15-20 min", ex:[
+          {name:"Wall drills — A-position, marching",presc:"Wk1-2: 2×5 reps/side, technique only, no speed emphasis — first real ground-contact loading in 6 weeks. Wk3: 3×5. Wk4 deload: 2×5 easy",sets:2,reps:"5"},
+          {name:"Build-up strides",presc:"Wk1: 3×20m @ 60-70%, walk-back recovery, technique over speed. Wk2: 4×20m @ 70%. Wk3: 4×30m @ 75-80%, first week pushing toward real speed. Wk4 deload: 3×20m @ 60%, easy",sets:4,reps:"1"},
+          {name:"Short accelerations",presc:"Wk3 only: 3-4 reps @ ~80-85%, full recovery (3+ min) — first taste of real intensity this block, stop if hips/hamstrings feel anything but clean. Skip in Wk1-2 and Wk4",sets:4,reps:"1"}
+        ]},
+        { name:"Cool-down", dur:"10 min", ex:[
+          {name:"Easy walk",presc:"400m",sets:0},
+          {name:"Hip flexor stretch",presc:"60 sec/side",sets:0},
+          {name:"Hamstring stretch",presc:"60 sec/side",sets:0},
+          {name:"Calf stretch",presc:"60 sec/side",sets:0},
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
       ]},
