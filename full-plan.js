@@ -773,10 +773,10 @@ const PLANS = [
     weeks: 4,
     startDate: "2026-08-31",
     weekNotes: [
-      "Week 1 — First structured week back after 6 weeks off (last trained July 16). Lifts capped at RPE 6–7, technique and hip mobility over load. Cardio treated as a true from-zero rebuild, not a pickup-where-you-left-off: short duration, low-impact modalities preferred (bike/row/incline walk over running), Zone 2 HR cap not pace. Don't chase July's numbers on either front this week.",
-      "Week 2 — Build. Nudge lift loads up based on how Week 1 felt — aim for RPE 7 on the main compounds. Cardio duration ticks up on the same conservative step-pattern below — resist the urge to jump ahead just because Week 1 felt easy, the engine comes back faster than tendons and joints do. Nutrition should be fully dialed in by now if Week 1 was just getting the habit started.",
-      "Week 3 — Continue building lifts toward pre-layoff working weights where RPE allows — six weeks off doesn't hit every movement pattern equally. Cardio hits its longest durations of the block this week. If running has been part of the mix, this is the earliest point to consider stringing continuous minutes together instead of run/walk — only if it's felt clean, not on schedule alone.",
-      "Week 4 — Deload + reassessment. Lift volume down ~30-40%, intensity stays moderate. Cardio drops to easy/short too — but that's a deload, not a reset: Phase 6 picks cardio back up from wherever Week 3 landed, it doesn't restart the ramp. End of week, check in on the hips, the QL under real load, and where the recomp is trending. That decides whether Phase 6 keeps building this base or shifts back toward performance."
+      "Week 1 — First structured week back after 6 weeks off (last trained July 16). Lifts capped at RPE 6–7, technique and hip mobility over load. Cardio has three distinct jobs, and if you're running on Tuesday or Saturday, both start as run/walk intervals — six weeks off means impact tolerance is down even though the engine feels fine. Thursday adds short sprint work plus a Zone 2 finisher, starting sub-max (70-75% effort) no matter how good it feels to open up — save that for Week 3. Bike/row/incline walk don't need the interval treatment, continuous is fine there from day one.",
+      "Week 2 — Build. Nudge lift loads up based on how Week 1 felt — aim for RPE 7 on the main compounds. Cardio ticks up on the same conservative step-pattern below across all three days, interval ratios shifting toward more running and less walking. Thursday's sprint effort nudges up too, still short of anything near max. Nutrition should be fully dialed in by now if Week 1 was just getting the habit started.",
+      "Week 3 — Continue building lifts toward pre-layoff working weights where RPE allows — six weeks off doesn't hit every movement pattern equally. This is the first week it's reasonable to open up on Thursday's sprints (~85-90%) and to drop Saturday's jog from intervals to continuous, if the first two weeks felt clean on both — earned, not automatic. Tuesday and Saturday hit their longest durations of the block either way.",
+      "Week 4 — Deload + reassessment. Lift volume down ~30-40%, intensity stays moderate. Cardio drops to easy/short across all three days — Tuesday and Saturday back to Week 1's interval pattern if running, and Thursday skips structured sprinting entirely — no new high-intensity stress right before a reassessment. This is a deload, not a reset: Phase 6 picks cardio back up from wherever Week 3 landed. End of week, check in on the hips, the QL under real load, and where the recomp is trending. That decides whether Phase 6 keeps building this base or shifts back toward performance."
     ],
     days: [
       { day:"Monday", label:"Full body A — hinge + push", tag:"Foundation reset", type:"lift", blocks:[
@@ -804,10 +804,9 @@ const PLANS = [
           {name:"Diaphragmatic breathing",presc:"3 min",sets:0}
         ]}
       ]},
-      { day:"Tuesday", label:"Zone 2 + hip mobility", tag:"Aerobic base, outside gym", type:"cardio", blocks:[
-        { name:"Zone 2 cardio — from-zero rebuild", dur:"15-25 min", ex:[
-          {name:"Bike, row, or incline walk — Zone 2, HR 130-145",presc:"Low-impact preferred right now — the aerobic engine comes back faster than tendons and joints do, no reason to rush impact. Wk1: 15 min continuous, easy. Wk2: 20 min. Wk3: 25 min. Wk4 deload: 15 min easy. If a step up feels rough, repeat the current duration one more week rather than pushing — this is a floor, not a mandate.",sets:0},
-          {name:"If running instead — run/walk intervals only this block",presc:"Wk1: 1 min jog / 2 min walk × 5 rounds (15 min). Wk2: 2 min jog / 2 min walk × 5 (20 min). Wk3: 3 min jog / 1 min walk × 6 (24 min). Save continuous running for Phase 6 once these intervals feel easy, not on a fixed schedule.",sets:0}
+      { day:"Tuesday", label:"Run/walk intervals + hip mobility", tag:"Interval rebuild, outside gym", type:"cardio", blocks:[
+        { name:"Run/walk intervals", dur:"15-24 min", ex:[
+          {name:"Run/walk intervals — HR capped at Zone 2 (130-145) on the run portions",presc:"Wk1: 1 min jog / 2 min walk × 5 rounds (15 min). Wk2: 2 min jog / 2 min walk × 5 (20 min). Wk3: 3 min jog / 1 min walk × 6 (24 min). Wk4 deload: back to Wk1's pattern, easy. Walk portions are full recovery, not filler — if the run portions are creeping past HR 145, the walk breaks aren't long enough yet.",sets:0}
         ]},
         { name:"Hip mobility focus", dur:"15 min", ex:[
           {name:"Kneeling hip flexor stretch",presc:"60 sec/side",sets:0},
@@ -841,14 +840,24 @@ const PLANS = [
           {name:"Couch stretch",presc:"60 sec/side",sets:0}
         ]}
       ]},
-      { day:"Thursday", label:"Zone 2 + daily mobility", tag:"Second cardio day", type:"cardio", blocks:[
-        { name:"Zone 2 cardio", dur:"15-30 min", ex:[
-          {name:"Bike, row, incline walk, or run/walk intervals — Zone 2, HR 130-145",presc:"Wk1: 15-20 min. Wk2: 20-25 min. Wk3: 25-30 min. Wk4 deload: 15-20 min easy. A golf round can cover this specific day if you're playing — 18 holes of walking is real aerobic time — but don't let golf replace Tuesday or Saturday's sessions, those are the ones actually building the base.",sets:0}
+      { day:"Thursday", label:"Sprint work + Zone 2", tag:"Speed + aerobic base", type:"cardio", blocks:[
+        { name:"Sprint warm-up", dur:"10 min", ex:[
+          {name:"Easy jog",presc:"3-4 min, build from walk to light jog",sets:0},
+          {name:"High knees",presc:"2×20m",sets:0},
+          {name:"Butt kicks",presc:"2×20m",sets:0},
+          {name:"A-skips",presc:"2×20m",sets:0},
+          {name:"Falling starts / lean-and-go",presc:"3×10m, light",sets:0}
         ]},
-        { name:"Daily minimum pliability", dur:"10 min", ex:[
+        { name:"Sprint work", dur:"10-15 min", ex:[
+          {name:"Accelerations / build-up sprints",presc:"Sprinting is the highest strain-risk piece of this whole rebuild — new stimulus on top of six weeks off — so effort stays sub-max even though it won't feel like it needs to. Wk1: 10m accelerations from a jog-in, ~70-75% effort, 6 reps, full recovery (90 sec+). Wk2: 20m build-ups easing up to ~80% by the last 10m, 5-6 reps. Wk3: 30m build-ups reaching ~85-90% in the final 10m, 4-5 reps — first week it's fair to actually open up. True max-effort sprinting waits for Phase 6, once three clean weeks are banked. Wk4 deload: skip structured sprinting, 3-4 easy 15m strides at ~60% if anything.",sets:0}
+        ]},
+        { name:"Zone 2 finisher", dur:"10-15 min", ex:[
+          {name:"Bike, row, jog, or brisk walk — easy Zone 2",presc:"Wk1: 10 min. Wk2: 12 min. Wk3: 15 min. Wk4 deload: 10 min easy, or skip if legs are fried. Sprint work itself is short and recovery-heavy, so this is what keeps Thursday contributing to the weekly cardio total.",sets:0}
+        ]},
+        { name:"Cool-down + daily minimum", dur:"10 min", ex:[
+          {name:"Supine hamstring stretch",presc:"90 sec/side — non-negotiable after sprint work",sets:0},
           {name:"Foam roll — previous muscles",presc:"3 min",sets:0},
           {name:"Hip 90/90",presc:"60 sec/side",sets:0},
-          {name:"Thoracic rotation",presc:"10 reps/side",sets:0},
           {name:"World's greatest stretch",presc:"5 reps/side",sets:0},
           {name:"Diaphragmatic breathing",presc:"2 min",sets:0}
         ]}
@@ -880,8 +889,8 @@ const PLANS = [
       ]},
       { day:"Saturday", label:"Long aerobic + full pliability", tag:"Base building", type:"cardio", blocks:[
         { name:"Cardio — the real base-building session", dur:"20-35 min", ex:[
-          {name:"Option A — easy jog/walk-run or brisk incline walk",presc:"Zone 2, conversational, this is the longest session of the week — don't skip ahead on it. Wk1: 20 min. Wk2: 28 min. Wk3: 35 min. Wk4 deload: 20 min easy. Running volume lags behind cardio fitness after a layoff — if legs feel beat up rather than lungs, swap to Option B for a week and keep building time instead of pounding pavement.",sets:0},
-          {name:"Option B — assault bike / row erg (default low-impact choice)",presc:"Same duration targets as Option A: Wk1 20 min, Wk2 28 min, Wk3 35 min, Wk4 deload 20 min. Good default for the first couple weeks regardless of running plans — takes joint stress off the table while the aerobic engine rebuilds. Phase 6 is where 40-45+ min comes back into play.",sets:0},
+          {name:"Option A — jog: run/walk intervals to start, continuous once earned",presc:"Same impact logic as Tuesday, scaled up since this is the longest session of the week. Wk1: 1 min jog / 2 min walk × 6-7 rounds (~20 min). Wk2: 2 min jog / 2 min walk × 7 rounds (~28 min). Wk3: either continue 3 min jog / 1 min walk × 8-9 rounds (~35 min), or shift to continuous easy jogging for the full 35 min IF Wk1-2 felt clean — not automatic. Wk4 deload: back to Wk1's easier interval pattern (~20 min).",sets:0},
+          {name:"Option B — assault bike, row erg, or incline walk (continuous is fine here)",presc:"No impact, so no interval requirement — continuous Zone 2 works from Wk1. Same duration targets: Wk1 20 min, Wk2 28 min, Wk3 35 min, Wk4 deload 20 min. Good default for the first couple weeks regardless of running plans — takes joint stress off the table while the aerobic engine rebuilds. Phase 6 is where 40-45+ min comes back into play.",sets:0},
           {name:"Option C — golf round counts as active recovery, not a substitute for structured Zone 2",presc:"n/a",sets:0}
         ]},
         { name:"Full pliability session", dur:"30 min", ex:[
