@@ -1,32 +1,21 @@
-# Fitness Tracker
-A mobile-first workout tracking app hosted on GitHub Pages.
+# Hybrid Run Mobility Plan
+
+A mobile-first mobility tracker hosted on GitHub Pages.
 
 ## Features
 
-- **Today** — Daily workout view with collapsible blocks (warm-up/cool-down collapsed by default), shortcut to the relevant log tab based on day type, and phase-aware navigation across all 12 weeks
-- **Week strip** — Swipable `‹ ›` navigation across all weeks in the full plan; logged days marked with accent dots
-- **Phase progress bar** — Live week-within-phase progress bar and streak counter below the topbar
-- **Lift** — Key lift dashboard (PR, estimated 1RM, sparklines) + strength logging + history grouped by exercise
-- **Cardio** — Log sprint and zone-2 sessions with history and metrics
-- **Mobility** — Daily minimum checklist (persisted) + day-specific warm-up and cool-down reference
-- **Log** — Weekly check-in form tracking sessions, fatigue, sleep, QL pain, pliability, and notes
-- **Plan page** — Tabbed view: "Current Phase" shows the active phase calendar, week notes, and full exercise reference; "Full Plan" shows all 3 phases in a single calendar overview
+- **Today**: the mobility routines for the selected day (e.g. Pre-lift A + Post-lift A on Monday), with tap-to-check exercises, dose and cue for each, and a progress bar. Finishing a routine collapses it and opens the next one. **Extras** holds the golf pre-round, the range-session warm-up, the crunched-day minimum and, on Mondays, the golf-weekend QL add-on.
+- **Week strip**: `‹ ›` moves between weeks. Dots show finished days (green), partial days (grey) and crunched-day minimum days (amber).
+- **Week**: the weekly schedule with minutes planned and done.
+- **Plan**: the full plan for reference, covering priorities, the weekly table and every routine.
+- **Rules**: the rules, progression toggles (calf raises past ~15 mi/week, strides once tempos start), a monthly-check log and red flags. The first Sunday of each month shows a reminder on Today.
 
 ## Files
 
-- `index.html` — Main app (all 5 tabs + week navigation)
-- `plan.html` — Plan viewer (Current Phase / Full Plan tabs)
-- `full-plan.js` — Single source of truth for all 3 phases (12 weeks total)
-
-## How phases work
-
-`full-plan.js` exports a `PLANS` array with 3 phase objects. Both `index.html` and `plan.html` call `getActivePlan()` at load time, which compares today's date against each phase's `startDate` and duration to automatically select the correct phase. No manual switching needed — the app advances to the next phase automatically on the correct date.
-
-**Phase schedule:**
-- Phase 1 — Accumulation: Apr 13 – May 10, 2026
-- Phase 2 — Transmutation: May 11 – Jun 7, 2026
-- Phase 3 — Realization: Jun 8 – Jul 5, 2026
+- `index.html`: the app
+- `mobility-data.js`: the plan itself (routines, weekly schedule, rules). Edit this file to change the plan.
+- `archive/`: the old 12-week training tracker, still reachable at `/archive/`
 
 ## Storage
 
-All workout data is keyed by phase id (e.g. `phase1:tplogs`), so data from previous phases is preserved in localStorage when the active phase advances.
+Everything is saved in the browser's localStorage under `mob:` keys (`mob:done:YYYY-MM-DD`, `mob:settings`, `mob:checks`), so it lives on whichever device and browser you use.
